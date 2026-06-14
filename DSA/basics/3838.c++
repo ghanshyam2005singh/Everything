@@ -1,7 +1,7 @@
 class Solution {
     public:
     int weightedWordMapping(vector<string>& words, vector<int>& weights){
-        string=ans;
+        string ans;
         for(string &word:words){
             int sum=0;
             for(char ch: word){
