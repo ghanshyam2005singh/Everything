@@ -1,0 +1,50 @@
+import type { DSASection } from '@/types/dsa';
+
+export const triesSection: DSASection = {
+  id: 'tries', slug: 'tries',
+  title: 'Tries [Theory and Problems]',
+  description: 'Prefix tree data structure for efficient string operations. String search, prefix matching, and XOR maximization.',
+  icon: '🔤', color: 'from-blue-600 to-cyan-600',
+  subsections: [
+    {
+      id: 'tries-theory', title: 'Theory',
+      topics: [
+        { id:'trie-intro', slug:'trie-intro', title:'Trie Data Structure (Implement Insert, Search, StartsWith)', type:'lesson', difficulty:'medium',
+          introduction:'A Trie (prefix tree) stores strings character by character. Each node has up to 26 children. Enables O(L) insert and search (L=string length).',
+          theory:`**Trie Node:** Array of 26 child pointers + isEnd flag.\n\n**Operations:**\n- **Insert:** For each char, go to corresponding child (create if null). Mark last as end.\n- **Search:** For each char, follow child. Return isEnd of last.\n- **StartsWith (prefix):** Same as search but return true after last char (don't check isEnd).\n\n**Complexity:** O(L) for all operations. O(Total chars) space.\n\n**Use cases:** Autocomplete, spell check, IP routing, XOR maximum subarray, word search.`,
+          codeExamples:[{title:'Trie Implementation',language:'cpp',code:`struct TrieNode {\n    TrieNode* children[26];\n    bool isEnd;\n    TrieNode() : isEnd(false) { fill(children, children+26, nullptr); }\n};\n\nclass Trie {\n    TrieNode* root;\npublic:\n    Trie() { root = new TrieNode(); }\n\n    void insert(string s) {\n        TrieNode* cur = root;\n        for (char c : s) {\n            int i = c - 'a';\n            if (!cur->children[i]) cur->children[i] = new TrieNode();\n            cur = cur->children[i];\n        }\n        cur->isEnd = true;\n    }\n\n    bool search(string s) {\n        TrieNode* cur = root;\n        for (char c : s) {\n            int i = c - 'a';\n            if (!cur->children[i]) return false;\n            cur = cur->children[i];\n        }\n        return cur->isEnd;\n    }\n\n    bool startsWith(string prefix) {\n        TrieNode* cur = root;\n        for (char c : prefix) {\n            int i = c - 'a';\n            if (!cur->children[i]) return false;\n            cur = cur->children[i];\n        }\n        return true;\n    }\n};`}],
+          leetcodeUrl:'https://leetcode.com/problems/implement-trie-prefix-tree/',
+          keyTakeaways:['Trie: O(L) insert/search. Space = O(total chars * 26).','isEnd marks complete word. children array for 26 letters.'] },
+      ],
+    },
+    {
+      id: 'tries-problems', title: 'Problems',
+      topics: [
+        { id:'word-search-trie', slug:'word-search-trie', title:'Word Search II (Find All Words from Board)', type:'problem', difficulty:'hard', pattern:'Trie + DFS',
+          problemStatement:'Given board and list of words, find all words that exist in the board (adjacent cells, no reuse).',
+          examples:[{input:'board=[["o","a","a","n"],["e","t","a","e"],["i","h","k","r"],["i","f","l","v"]], words=["oath","pea","eat","rain"]', output:'["eat","oath"]'}],
+          approaches:[{name:'Build Trie, DFS from each cell',intuition:'Build trie from words. DFS from each cell — at each step, check if current character leads to a trie node. If complete word found, add to result.',steps:['Build trie from words list','DFS from every cell','Track visited (mark with #)','When trie node isEnd: add word to result, mark !isEnd to avoid duplicates','Backtrack'],complexity:{time:'O(M*N*4^L)',space:'O(total chars)'},code:`struct TrieNode{TrieNode*c[26];string word;TrieNode():word(""){fill(c,c+26,nullptr);}}\nclass Solution{\n    vector<string> res;\n    void dfs(vector<vector<char>>&b,TrieNode*t,int r,int c){\n        if(r<0||r>=b.size()||c<0||c>=b[0].size()||b[r][c]=='#') return;\n        char ch=b[r][c]; int i=ch-'a';\n        if(!t->c[i]) return;\n        t=t->c[i];\n        if(t->word!=""){res.push_back(t->word);t->word="";}\n        b[r][c]='#';\n        dfs(b,t,r+1,c);dfs(b,t,r-1,c);dfs(b,t,r,c+1);dfs(b,t,r,c-1);\n        b[r][c]=ch;\n    }\npublic:\n    vector<string> findWords(vector<vector<char>>&b,vector<string>&words){\n        TrieNode*root=new TrieNode();\n        for(auto&w:words){TrieNode*cur=root;for(char c:w){int i=c-'a';if(!cur->c[i])cur->c[i]=new TrieNode();cur=cur->c[i];}cur->word=w;}\n        for(int r=0;r<b.size();r++) for(int c=0;c<b[0].size();c++) dfs(b,root,r,c);\n        return res;\n    }\n};`}],
+          hints:['Build trie from all words first.','DFS from each cell, following trie paths.','Mark found words as empty to avoid duplicates.'],
+          solution:`// Trie + DFS as above`, leetcodeUrl:'https://leetcode.com/problems/word-search-ii/', keyTakeaways:['Trie + DFS: prune by checking if trie has path for current char. Efficient multi-word search.'] },
+        { id:'max-xor-two-arrays', slug:'max-xor-two-arrays', title:'Maximum XOR of Two Numbers in an Array', type:'problem', difficulty:'medium', pattern:'Bit Trie',
+          problemStatement:'Find maximum XOR of any two numbers from two arrays (or within one array).',
+          examples:[{input:'nums=[3,10,5,25,2,8]', output:'28', explanation:'5 XOR 25 = 28'}],
+          approaches:[{name:'Binary Trie',intuition:'Build binary trie (bits from MSB to LSB). For each number, traverse trie taking opposite bit when possible to maximize XOR.',steps:['Build trie inserting each number bit by bit (MSB first)','For each number, greedily choose opposite bit in trie to maximize XOR','Track max XOR'],complexity:{time:'O(N*32)',space:'O(N*32)'},code:`struct BitNode{BitNode*c[2];BitNode():c{nullptr,nullptr}{}};\nclass BitTrie{\n    BitNode*root=new BitNode();\npublic:\n    void insert(int n){BitNode*cur=root;for(int i=31;i>=0;i--){int b=(n>>i)&1;if(!cur->c[b])cur->c[b]=new BitNode();cur=cur->c[b];}}\n    int maxXOR(int n){BitNode*cur=root;int res=0;for(int i=31;i>=0;i--){int b=(n>>i)&1,want=1-b;if(cur->c[want]){res|=(1<<i);cur=cur->c[want];}else cur=cur->c[b];}return res;}\n};\nint findMaximumXOR(vector<int>&nums){\n    BitTrie t; int mx=0;\n    for(int x:nums) t.insert(x);\n    for(int x:nums) mx=max(mx,t.maxXOR(x));\n    return mx;\n}`}],
+          hints:['Binary trie: each bit is a node (0 or 1).','Insert all numbers bit by bit from MSB.','For each number, choose opposite bit at each level to maximize XOR.'],
+          solution:`// BitTrie with insert + maxXOR as above`, leetcodeUrl:'https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/', keyTakeaways:['Binary trie for XOR maximization: greedy choose opposite bit at each level.'] },
+        { id:'count-distinct-substrings', slug:'count-distinct-substrings', title:'Count Distinct Substrings (Trie Method)', type:'problem', difficulty:'medium', pattern:'Trie',
+          problemStatement:'Count the number of distinct substrings of a given string using a Trie.',
+          examples:[{input:'"abab"', output:'7', explanation:'"","a","b","ab","ba","aba","bab","abab" → 7 non-empty distinct'}],
+          approaches:[{name:'Insert all suffixes into Trie',intuition:'A new node in the trie = a new distinct substring. Count total nodes created.',steps:['For each starting index i, insert suffix s[i..n] into trie','Each new node created = 1 new distinct substring','Return total node count'],complexity:{time:'O(N²)',space:'O(N²)'},code:`struct T{T*c[26];T():c{}{fill(c,c+26,nullptr);}};\nint countDistinct(string s){\n    T*root=new T(); int cnt=0;\n    for(int i=0;i<s.size();i++){\n        T*cur=root;\n        for(int j=i;j<s.size();j++){\n            int x=s[j]-'a';\n            if(!cur->c[x]){cur->c[x]=new T();cnt++;}\n            cur=cur->c[x];\n        }\n    }\n    return cnt;\n}`}],
+          hints:['Insert each suffix into trie.','New node created = new distinct substring found.','Count total nodes across all insertions.'],
+          solution:`// Suffix insertion count as above`, keyTakeaways:['Distinct substrings via trie: count new nodes. Each new node = 1 new distinct substring.'] },
+        { id:'prefix-autocomplete', slug:'prefix-autocomplete', title:'Prefix Autocomplete (Design Search Suggestions)', type:'problem', difficulty:'medium', pattern:'Trie',
+          problemStatement:'Given products list and search string, return for each prefix of search the 3 lexicographically smallest products matching that prefix.',
+          examples:[{input:'products=["mobile","mouse","mango"], searchWord="mouse"', output:'[["mango","mobile","mouse"],["mango","mobile","mouse"],...]'}],
+          approaches:[{name:'Sort + Binary Search or Trie',intuition:'Sort products. For each prefix, binary search for start and collect up to 3 matches.',steps:['Sort products','For each prefix: lower_bound gives first match','Collect up to 3 products starting with prefix'],complexity:{time:'O(N log N + L² + L)',space:'O(N)'},code:`vector<vector<string>> suggestedProducts(vector<string>&p,string s){\n    sort(p.begin(),p.end());\n    vector<vector<string>>res;\n    string prefix;\n    for(char c:s){\n        prefix+=c;\n        auto it=lower_bound(p.begin(),p.end(),prefix);\n        vector<string>cur;\n        for(int i=0;it+i!=p.end()&&i<3;i++){\n            if((p[it-p.begin()+i]).substr(0,prefix.size())==prefix)\n                cur.push_back(p[it-p.begin()+i]);\n            else break;\n        }\n        res.push_back(cur);\n    }\n    return res;\n}`}],
+          hints:['Sort products first for lexicographic order.','Binary search for each prefix to find first match.','Take up to 3 products starting with current prefix.'],
+          solution:`// Sort + lower_bound as above`, leetcodeUrl:'https://leetcode.com/problems/search-suggestions-system/', keyTakeaways:['Autocomplete: sort + binary search per prefix. Or trie with DFS collecting up to 3 results.'] },
+      ],
+    },
+  ],
+};

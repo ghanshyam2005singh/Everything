@@ -1048,101 +1048,627 @@ for (let i = 0; i < 6; i++) {
     id: 'functions',
     slug: 'functions',
     title: 'Functions',
-    description: 'Declarations, expressions, arrow functions, parameters, default values, and return.',
+    description: 'Master function declarations, expressions, arrow functions, parameters, return values, and first-class function patterns.',
     category: 'Functions',
     order: 10,
     difficulty: 'beginner',
-    estimatedTime: 25,
-    content: `Functions are **reusable blocks of code**. They are first-class citizens in JavaScript — you can pass them as arguments, return them from other functions, and store them in variables.\n\n**Three ways to define functions:**\n1. **Function declaration:** \`function name() {}\` — hoisted, can be called before definition.\n2. **Function expression:** \`const name = function() {}\` — not hoisted, assigned to variable.\n3. **Arrow function:** \`const name = () => {}\` — shorter syntax, no own \`this\` binding.\n\n**Parameters vs Arguments:** Parameters are the names in the function definition. Arguments are the actual values passed when calling.\n\n**Default parameters:** \`function greet(name = "World") {}\`\n\n**Rest parameters:** Collect remaining arguments into an array: \`function sum(...nums) {}\`\n\n**Arrow functions** cannot be used as constructors and do not have their own \`this\`, \`arguments\`, or \`super\`.`,
+    estimatedTime: 45,
+    content: `**What is a Function?**
+
+A function is a named, reusable block of code that performs a specific task. Think of it like a recipe — you write the recipe once, and you can follow it as many times as you need without rewriting the steps. You "call" a function the same way you "follow" a recipe.
+
+Without functions, if you needed to greet 100 users you would write 100 greeting statements. With a function, you write the greeting logic once and call it 100 times. This is the DRY principle: **Don't Repeat Yourself**.
+
+**Syntax of a Function (the anatomy)**
+
+Every function has these parts:
+1. The \`function\` keyword (tells JavaScript "a function starts here")
+2. A **name** (so you can call it later)
+3. **Parameters** in parentheses \`()\` — placeholders for input values
+4. A **body** in curly braces \`{}\` — the code to run
+5. Optionally a **return** statement — the output
+
+\`\`\`
+function functionName(parameter1, parameter2) {
+  // body: code to execute
+  return result; // optional output
+}
+\`\`\`
+
+**Parameters vs Arguments — the Difference**
+
+This confuses many beginners. Here is the clear definition:
+- **Parameter**: the variable name written inside the function definition's parentheses. It is a placeholder.
+- **Argument**: the actual value you pass when you CALL the function.
+
+Example: In \`function add(a, b)\` — \`a\` and \`b\` are **parameters**.
+When you write \`add(5, 3)\` — \`5\` and \`3\` are **arguments**.
+Parameters receive arguments. Parameters are local to the function body.
+
+**Way 1 — Function Declaration**
+
+The classic way. You write the \`function\` keyword first, then the name, then the parentheses, then the body. This is the most readable and most common form for standalone functions.
+
+Syntax: \`function name(params) { body }\`
+
+The key special property of declarations: they are **hoisted**. Hoisting means JavaScript reads all function declarations before running any code in that file. So you can call a declared function BEFORE the line where it is written. This can be convenient but can also confuse beginners, so use it knowingly.
+
+When to use: For regular named utility functions, helper functions, recursive functions (a function that calls itself), and any situation where you want hoisting.
+
+**Way 2 — Function Expression**
+
+Here you create a function and assign it to a variable. The function itself has no name (anonymous) — the variable holds it.
+
+Syntax: \`const name = function(params) { body };\`
+
+Note the semicolon at the end — this is a variable assignment statement.
+
+Key property: **NOT hoisted**. If you try to call a function expression before its line in the code, you get a \`ReferenceError: Cannot access before initialization\` (for \`const\`/\`let\`) or \`TypeError: name is not a function\` (for \`var\`). You must define it first, then call it.
+
+When to use: When you want to ensure functions are defined in a specific order, when passing a function immediately as an argument, or when you want to assign different functions to the same variable conditionally.
+
+**Way 3 — Arrow Functions (ES6)**
+
+Introduced in ES2015 (ES6). A shorter syntax for writing function expressions. Arrow functions are always anonymous — they have no name of their own.
+
+Basic syntax: \`const name = (params) => { body };\`
+
+Arrow functions have several syntax shortcuts:
+- **One parameter**: you can drop the parentheses → \`const double = n => n * 2;\`
+- **No parameters**: you MUST keep empty parentheses → \`const greet = () => "hello";\`
+- **Single expression body**: you can drop the curly braces AND the \`return\` keyword — the expression is implicitly returned → \`const add = (a, b) => a + b;\`
+- **Multi-line body**: must use curly braces AND write \`return\` explicitly → \`const add = (a, b) => { const sum = a + b; return sum; };\`
+- **Returning an object literal**: wrap it in parentheses to avoid ambiguity → \`const makeUser = name => ({ name: name, role: "user" });\`
+
+**Arrow Functions vs Regular Functions — Full Comparison**
+
+This is the most important distinction and a very common interview question.
+
+**1. The \`this\` keyword (the biggest difference)**
+Regular functions have their OWN \`this\`. The value of \`this\` depends on HOW the function is called (who calls it). Arrow functions do NOT have their own \`this\`. They inherit \`this\` from the surrounding lexical (enclosing) scope — wherever the arrow function is defined, not where it is called.
+
+This matters most when using methods inside objects and callbacks inside class methods. Use regular functions for object methods. Use arrow functions for callbacks inside those methods.
+
+**2. The \`arguments\` object**
+Regular functions get a special built-in \`arguments\` object — an array-like object containing all arguments passed to the function. Arrow functions do NOT have an \`arguments\` object. To collect multiple args in an arrow function, use rest parameters \`...args\`.
+
+**3. Can be used as a constructor (with \`new\`)**
+Regular functions can be called with \`new\` to create objects. Arrow functions CANNOT. Calling \`new arrowFn()\` throws: \`TypeError: arrowFn is not a constructor\`.
+
+**4. Prototype property**
+Regular functions automatically have a \`prototype\` property. Arrow functions do not — they have no \`prototype\`.
+
+**5. Generator functions**
+Regular functions can be made generators using \`function*\`. Arrow functions cannot be generators.
+
+Quick summary table:
+| Feature              | Regular Function | Arrow Function |
+|----------------------|-----------------|----------------|
+| \`this\` binding      | Own (dynamic)   | Inherits (lexical) |
+| \`arguments\` object | Yes             | No             |
+| Can use \`new\`      | Yes             | No             |
+| Has \`prototype\`    | Yes             | No             |
+| Hoisted              | Yes (declaration) | No            |
+| Can be generator     | Yes             | No             |
+| Syntax               | Longer          | Shorter        |
+
+**The Return Statement**
+
+Every function has an implicit return of \`undefined\` if you don't write a return statement. The \`return\` keyword does two things: (1) sends a value back to the caller, (2) immediately exits the function — no code after \`return\` in that block runs.
+
+You can have multiple return statements (early returns) for different conditions. This is a common pattern for guard clauses.
+
+**Default Parameters**
+
+Before ES6, you had to check if a parameter was \`undefined\` and set a fallback manually. ES6 introduced default parameters — values used when an argument is not passed or is explicitly passed as \`undefined\`.
+
+Syntax: \`function greet(name = "World") {}\`
+
+You can use any expression as a default — even the result of calling another function. Default parameters only trigger for \`undefined\`, not for \`null\` or \`0\` or \`""\` (those are valid values that override nothing).
+
+**Rest Parameters**
+
+What if you want a function that accepts any number of arguments? Use rest parameters. The syntax is three dots before the last parameter name: \`...paramName\`. This collects all remaining arguments into a real JavaScript array.
+
+Syntax: \`function sum(...numbers) { return numbers.reduce((acc, n) => acc + n, 0); }\`
+
+Rules:
+- Rest parameter must be the LAST parameter: \`function fn(a, b, ...rest)\` — correct
+- Only ONE rest parameter per function
+- It gives you a real array (unlike the \`arguments\` object)
+
+**First-Class Functions — Treating Functions as Values**
+
+In JavaScript, functions are values — just like numbers, strings, or objects. This is what "first-class citizen" means. It has three consequences:
+
+1. **Store in a variable**: \`const fn = function() {};\`
+2. **Pass as an argument**: \`doSomething(myFunction);\` — the function you pass is called a **callback**
+3. **Return from a function**: \`function make() { return function() {}; }\` — a function that returns a function is called a **higher-order function**
+
+Callbacks are everywhere in JavaScript: event listeners, array methods (\`map\`, \`filter\`, \`reduce\`), \`setTimeout\`, \`fetch\` responses. Understanding that functions are values is essential for modern JavaScript.`,
     codeExamples: [
       {
-        title: 'Function types',
-        code: `// Declaration (hoisted)
-function add(a, b) {
+        title: 'Function Declaration — syntax, hoisting, anatomy',
+        code: `// ── FUNCTION DECLARATION ──────────────────────────────────────────
+// Syntax: function name(parameters) { body }
+
+// You can call it BEFORE it is defined — hoisting!
+console.log(greet("Alice")); // "Hello, Alice!" — works because of hoisting
+
+function greet(name) {       // 'name' is the PARAMETER (placeholder)
+  return "Hello, " + name + "!";
+}
+
+console.log(greet("Bob"));   // "Hello, Bob!"   — normal call after definition
+
+// ── PARAMETERS vs ARGUMENTS ────────────────────────────────────────
+function add(a, b) {         // a and b are PARAMETERS
   return a + b;
 }
 
-// Expression (not hoisted)
+const result = add(10, 5);   // 10 and 5 are ARGUMENTS passed to a and b
+console.log(result);         // 15
+
+// ── MULTIPLE PARAMETERS ────────────────────────────────────────────
+function introduce(firstName, lastName, age) {
+  return firstName + " " + lastName + " is " + age + " years old.";
+}
+console.log(introduce("John", "Doe", 25)); // "John Doe is 25 years old."
+
+// ── FUNCTION WITHOUT RETURN ────────────────────────────────────────
+function sayHi(name) {
+  console.log("Hi, " + name + "!"); // just prints, no return
+}
+const val = sayHi("Tom");   // "Hi, Tom!" (prints)
+console.log(val);            // undefined — no return statement means undefined`,
+        output: 'Hello, Alice!\nHello, Bob!\n15\nJohn Doe is 25 years old.\nHi, Tom!\nundefined',
+      },
+      {
+        title: 'Function Expression — not hoisted, assigned to variable',
+        code: `// ── FUNCTION EXPRESSION ──────────────────────────────────────────
+// Syntax: const name = function(parameters) { body };
+// The function is anonymous — the variable holds it
+
 const multiply = function(a, b) {
   return a * b;
 };
 
-// Arrow function
-const divide = (a, b) => a / b; // implicit return
+console.log(multiply(4, 5)); // 20
 
-// Arrow with block body
-const subtract = (a, b) => {
-  const result = a - b;
-  return result;
+// ── CALLING BEFORE DEFINITION (will FAIL) ──────────────────────────
+// console.log(square(3)); // ❌ ReferenceError: Cannot access 'square' before initialization
+
+const square = function(n) {
+  return n * n;
 };
 
-console.log(add(2, 3));      // 5
-console.log(multiply(2, 3)); // 6
-console.log(divide(10, 2));  // 5`,
-        output: '5\n6\n5',
+console.log(square(3)); // 9  — works only AFTER the definition
+
+// ── NAMED FUNCTION EXPRESSION ─────────────────────────────────────
+// You can give the function a name — useful for stack traces and recursion
+const factorial = function fact(n) {
+  if (n <= 1) return 1;
+  return n * fact(n - 1); // can use 'fact' internally
+};
+
+console.log(factorial(5)); // 120
+// console.log(fact(5));   // ❌ 'fact' is NOT accessible outside
+
+// ── CONDITIONAL FUNCTION ASSIGNMENT ───────────────────────────────
+let process;
+const userIsAdmin = true;
+
+if (userIsAdmin) {
+  process = function(data) { return "Admin processing: " + data; };
+} else {
+  process = function(data) { return "User processing: " + data; };
+}
+
+console.log(process("report")); // "Admin processing: report"`,
+        output: '20\n9\n120\nAdmin processing: report',
       },
       {
-        title: 'Default and rest parameters',
-        code: `// Default parameters
-function greet(name = "World", greeting = "Hello") {
-  return \`\${greeting}, \${name}!\`;
-}
-console.log(greet());           // "Hello, World!"
-console.log(greet("Alice"));    // "Hello, Alice!"
-console.log(greet("Bob", "Hi")); // "Hi, Bob!"
+        title: 'Arrow Functions — all syntax variants explained',
+        code: `// ── ARROW FUNCTION SYNTAX VARIANTS ───────────────────────────────
 
-// Rest parameters
+// VARIANT 1: Full form with parentheses and block body
+const add = (a, b) => {
+  const sum = a + b;
+  return sum;  // must write return explicitly with block body
+};
+console.log(add(3, 4));    // 7
+
+// VARIANT 2: Implicit return — single expression, no braces, no return
+const multiply = (a, b) => a * b;   // 'a * b' is automatically returned
+console.log(multiply(3, 4));  // 12
+
+// VARIANT 3: Single parameter — parentheses are optional
+const double = n => n * 2;   // no parens needed for single param
+console.log(double(7));       // 14
+
+// VARIANT 4: No parameters — empty parentheses required
+const greet = () => "Hello, World!";
+console.log(greet());         // Hello, World!
+
+// VARIANT 5: Returning an object literal — must wrap in parentheses!
+// Why? Because {} looks like a block body to JavaScript
+const makeUser = (name, age) => ({ name: name, age: age });
+console.log(makeUser("Alice", 30)); // { name: 'Alice', age: 30 }
+
+// ── MULTI-LINE ARROW FUNCTION ──────────────────────────────────────
+const getGrade = score => {
+  if (score >= 90) return "A";
+  if (score >= 80) return "B";
+  if (score >= 70) return "C";
+  return "F";
+};
+console.log(getGrade(85)); // "B"
+console.log(getGrade(55)); // "F"`,
+        output: '7\n12\n14\nHello, World!\n{ name: \'Alice\', age: 30 }\nB\nF',
+      },
+      {
+        title: "Arrow vs Regular — 'this' binding (the critical difference)",
+        code: `// ── THE 'this' PROBLEM ────────────────────────────────────────────
+
+const person = {
+  name: "Alice",
+  age: 25,
+
+  // ✅ Regular function as method: 'this' = the object
+  greet: function() {
+    console.log("Hi, I am " + this.name);  // this.name = "Alice"
+  },
+
+  // ❌ Arrow function as method: 'this' is NOT the object
+  // Arrow functions inherit 'this' from the surrounding scope (here: global/module)
+  greetArrow: () => {
+    console.log("Hi, I am " + this?.name); // this is undefined (strict mode) or global
+  },
+
+  // ✅ Regular method with arrow function inside callback
+  // Arrow function inside correctly inherits 'this' from the method
+  printAfterDelay: function() {
+    const self = this; // old way (before arrow functions)
+    setTimeout(function() {
+      console.log("Old way: " + self.name);  // had to use 'self'
+    }, 100);
+
+    // Modern way with arrow function — 'this' is inherited from printAfterDelay
+    setTimeout(() => {
+      console.log("Arrow way: " + this.name); // this.name = "Alice" ✅
+    }, 200);
+  },
+};
+
+person.greet();        // "Hi, I am Alice"
+person.greetArrow();   // "Hi, I am undefined"
+person.printAfterDelay();
+// (after ~100ms): "Old way: Alice"
+// (after ~200ms): "Arrow way: Alice"`,
+        output: 'Hi, I am Alice\nHi, I am undefined\nOld way: Alice\nArrow way: Alice',
+      },
+      {
+        title: "Arrow vs Regular — 'arguments' object",
+        code: `// ── ARGUMENTS OBJECT IN REGULAR FUNCTION ─────────────────────────
+// Regular functions automatically get an 'arguments' object —
+// an array-LIKE object of all passed args (but not a real array)
+
+function logArgs() {
+  console.log(arguments);        // Arguments object
+  console.log(arguments[0]);     // First argument
+  console.log(arguments.length); // Number of arguments
+
+  // Convert to real array to use array methods
+  const arr = Array.from(arguments);
+  console.log(arr.map(x => x * 2));
+}
+
+logArgs(1, 2, 3, 4); // Works
+
+// ── ARROW FUNCTION: NO 'arguments' OBJECT ─────────────────────────
+const logArgsArrow = () => {
+  // console.log(arguments); // ❌ ReferenceError: arguments is not defined
+  console.log("Arrow functions have no arguments object");
+};
+
+logArgsArrow(1, 2, 3); // The extra args are completely inaccessible
+
+// ── SOLUTION: Use rest parameters in arrow functions ───────────────
+const sum = (...numbers) => {
+  console.log(numbers);          // [1, 2, 3, 4] — a real array
+  return numbers.reduce((total, n) => total + n, 0);
+};
+
+console.log(sum(1, 2, 3, 4));  // 10
+
+// ── ARROW FUNCTION CANNOT USE 'new' ───────────────────────────────
+function Person(name) {        // Regular function: can use 'new'
+  this.name = name;
+}
+const p = new Person("Alice"); // ✅ works
+console.log(p.name);           // "Alice"
+
+const PersonArrow = (name) => { this.name = name; };
+// const p2 = new PersonArrow("Bob"); // ❌ TypeError: PersonArrow is not a constructor`,
+        output: '[Arguments] { \'0\': 1, \'1\': 2, \'2\': 3, \'3\': 4 }\n1\n4\n[2, 4, 6, 8]\nArrow functions have no arguments object\n[1, 2, 3, 4]\n10\nAlice',
+      },
+      {
+        title: 'Default Parameters — full guide',
+        code: `// ── DEFAULT PARAMETERS (ES6) ─────────────────────────────────────
+// Before ES6, you wrote: name = name || "World"
+// ES6 lets you write defaults directly in the parameter list
+
+function greet(name = "World", punctuation = "!") {
+  return "Hello, " + name + punctuation;
+}
+
+console.log(greet());                // "Hello, World!"  — both defaults used
+console.log(greet("Alice"));         // "Hello, Alice!"  — punctuation default
+console.log(greet("Bob", "."));      // "Hello, Bob."    — no defaults used
+console.log(greet(undefined, "?")); // "Hello, World?"  — undefined triggers default
+console.log(greet(null, "!"));      // "Hello, null!"   — null does NOT trigger default
+
+// ── ORDER MATTERS ─────────────────────────────────────────────────
+// Defaults work for the RIGHTMOST parameters typically
+// You can't skip middle parameters without passing undefined
+
+function createUser(
+  name,                // required — no default
+  role = "viewer",     // optional
+  isActive = true      // optional
+) {
+  return { name, role, isActive };
+}
+
+console.log(createUser("Alice"));               // { name: 'Alice', role: 'viewer', isActive: true }
+console.log(createUser("Bob", "admin"));        // { name: 'Bob', role: 'admin', isActive: true }
+console.log(createUser("Carol", undefined, false)); // { name: 'Carol', role: 'viewer', isActive: false }
+
+// ── EXPRESSIONS AS DEFAULTS ────────────────────────────────────────
+// Default values can be expressions — even function calls
+function getDefaultAge() { return 18; }
+
+function registerUser(name, age = getDefaultAge()) {
+  return name + " is " + age + " years old";
+}
+
+console.log(registerUser("Dave"));     // "Dave is 18 years old"
+console.log(registerUser("Eve", 25));  // "Eve is 25 years old"`,
+        output: 'Hello, World!\nHello, Alice!\nHello, Bob.\nHello, World?\nHello, null!\n{ name: \'Alice\', role: \'viewer\', isActive: true }\n{ name: \'Bob\', role: \'admin\', isActive: true }\n{ name: \'Carol\', role: \'viewer\', isActive: false }\nDave is 18 years old\nEve is 25 years old',
+      },
+      {
+        title: 'Rest Parameters — collecting unlimited arguments',
+        code: `// ── REST PARAMETERS ──────────────────────────────────────────────
+// Three dots ... before the LAST parameter name
+// Collects ALL remaining arguments into a REAL array
+
 function sum(...numbers) {
+  // 'numbers' is a real array — you can use all array methods
+  console.log("Numbers array:", numbers);
   return numbers.reduce((total, n) => total + n, 0);
 }
-console.log(sum(1, 2, 3, 4, 5)); // 15`,
-        output: 'Hello, World!\nHello, Alice!\nHi, Bob!\n15',
+
+console.log(sum(1, 2, 3));           // Numbers array: [1, 2, 3] → 6
+console.log(sum(10, 20, 30, 40));    // Numbers array: [10, 20, 30, 40] → 100
+console.log(sum());                   // Numbers array: [] → 0
+
+// ── COMBINING REGULAR AND REST PARAMETERS ─────────────────────────
+// Rest must ALWAYS be the LAST parameter
+
+function log(level, ...messages) {   // 'level' is normal, '...messages' gets the rest
+  console.log("[" + level + "]", messages.join(", "));
+}
+
+log("INFO", "Server started");                     // [INFO] Server started
+log("ERROR", "DB failed", "retry in 5s");          // [ERROR] DB failed, retry in 5s
+log("DEBUG", "step1", "step2", "step3", "step4"); // [DEBUG] step1, step2, step3, step4
+
+// ── WHY REST IS BETTER THAN 'arguments' ───────────────────────────
+// arguments: array-like, has no array methods, confusing
+// rest: real array with full array method access
+
+function withArguments() {
+  // Can't do arguments.map() — not a real array
+  return Array.from(arguments).filter(n => n > 0).reduce((a, b) => a + b, 0);
+}
+
+function withRest(...nums) {
+  // nums is already a real array
+  return nums.filter(n => n > 0).reduce((a, b) => a + b, 0);
+}
+
+console.log(withArguments(-1, 2, -3, 4, 5)); // 11
+console.log(withRest(-1, 2, -3, 4, 5));       // 11 (cleaner code)`,
+        output: 'Numbers array: [1, 2, 3]\n6\nNumbers array: [10, 20, 30, 40]\n100\nNumbers array: []\n0\n[INFO] Server started\n[ERROR] DB failed, retry in 5s\n[DEBUG] step1, step2, step3, step4\n11\n11',
       },
       {
-        title: 'Functions as first-class citizens',
-        code: `// Pass a function as argument
-function runTwice(fn) {
-  fn();
-  fn();
-}
-runTwice(() => console.log("Hello!")); // Hello! Hello!
+        title: 'Return Statement — early returns, multiple returns',
+        code: `// ── THE RETURN STATEMENT ─────────────────────────────────────────
+// 'return' does two things:
+//   1. Sends a value back to whoever called the function
+//   2. Immediately exits the function — no code after it runs
 
-// Return a function
-function makeMultiplier(x) {
-  return (n) => n * x;
+function absolute(n) {
+  if (n < 0) return -n;  // ← early return, exits here for negatives
+  return n;               // ← runs only for non-negative numbers
 }
+
+console.log(absolute(-5));  // 5
+console.log(absolute(3));   // 3
+
+// ── GUARD CLAUSES (common pattern) ────────────────────────────────
+// Instead of deeply nested if-else, use early returns to "guard"
+// against bad inputs at the top of the function
+
+function divide(a, b) {
+  if (typeof a !== "number" || typeof b !== "number") {
+    return "Error: both arguments must be numbers";  // guard: invalid types
+  }
+  if (b === 0) {
+    return "Error: cannot divide by zero";           // guard: division by zero
+  }
+  return a / b;   // happy path — only reached if all guards pass
+}
+
+console.log(divide(10, 2));      // 5
+console.log(divide(10, 0));      // "Error: cannot divide by zero"
+console.log(divide("a", 2));     // "Error: both arguments must be numbers"
+
+// ── MULTIPLE RETURN VALUES (via object/array) ─────────────────────
+// Functions can only return ONE value, but that value can be an array or object
+
+function minMax(arr) {
+  const sorted = [...arr].sort((a, b) => a - b);
+  return { min: sorted[0], max: sorted[sorted.length - 1] };  // return object
+}
+
+const { min, max } = minMax([3, 1, 4, 1, 5, 9, 2, 6]);
+console.log("Min:", min, "Max:", max);  // Min: 1 Max: 9
+
+// ── RETURN WITHOUT VALUE ───────────────────────────────────────────
+function printIfPositive(n) {
+  if (n <= 0) return;        // exit early with no value (returns undefined)
+  console.log(n + " is positive");
+}
+
+printIfPositive(-5);  // (nothing printed, just exits)
+printIfPositive(7);   // "7 is positive"`,
+        output: '5\n3\n5\nError: cannot divide by zero\nError: both arguments must be numbers\nMin: 1 Max: 9\n7 is positive',
+      },
+      {
+        title: 'First-Class Functions — callbacks and higher-order functions',
+        code: `// ── FUNCTIONS AS VALUES (first-class citizens) ────────────────────
+// In JavaScript, functions are values just like numbers and strings
+// You can: store them, pass them, return them
+
+// 1. STORE A FUNCTION IN A VARIABLE
+const sayHello = function() { return "Hello!"; };
+console.log(sayHello()); // "Hello!"
+
+// Store in an array
+const operations = [
+  (a, b) => a + b,
+  (a, b) => a - b,
+  (a, b) => a * b,
+];
+console.log(operations[0](5, 3)); // 8
+console.log(operations[2](5, 3)); // 15
+
+// 2. PASS A FUNCTION AS AN ARGUMENT (callback pattern)
+// A function passed as an argument is called a "callback"
+function applyOperation(a, b, operation) {
+  // 'operation' is a function — call it with a and b
+  return operation(a, b);
+}
+
+const add = (a, b) => a + b;
+const multiply = (a, b) => a * b;
+
+console.log(applyOperation(10, 3, add));      // 13
+console.log(applyOperation(10, 3, multiply)); // 30
+console.log(applyOperation(10, 3, (a, b) => a - b)); // 7  — inline arrow function
+
+// Array methods USE this pattern — map/filter/reduce take callbacks
+const numbers = [1, 2, 3, 4, 5];
+const doubled = numbers.map(n => n * 2);      // n => n*2 is the callback
+const evens = numbers.filter(n => n % 2 === 0);
+const total = numbers.reduce((acc, n) => acc + n, 0);
+
+console.log(doubled); // [2, 4, 6, 8, 10]
+console.log(evens);   // [2, 4]
+console.log(total);   // 15
+
+// 3. RETURN A FUNCTION FROM A FUNCTION (higher-order function)
+// A function that returns another function is a "higher-order function"
+function makeMultiplier(factor) {
+  // Returns a new function that remembers 'factor' via closure
+  return function(number) {
+    return number * factor;
+  };
+}
+
+const double = makeMultiplier(2);
 const triple = makeMultiplier(3);
-console.log(triple(5)); // 15
-console.log(triple(10)); // 30`,
-        output: 'Hello!\nHello!\n15\n30',
+const times10 = makeMultiplier(10);
+
+console.log(double(5));   // 10
+console.log(triple(5));   // 15
+console.log(times10(5));  // 50`,
+        output: 'Hello!\n8\n15\n13\n30\n7\n[2, 4, 6, 8, 10]\n[2, 4]\n15\n10\n15\n50',
       },
     ],
     commonMistakes: [
-      'Using arrow functions as methods — they inherit this from outer scope, causing bugs.',
-      'Forgetting to return in a function — returns undefined by default.',
-      'Calling a function expression before it is defined — unlike declarations, these are not hoisted.',
+      'Using an arrow function as an object method when you need to access the object with "this" — arrow functions inherit "this" from the outer scope, so "this" inside will NOT be the object. Use a regular function for object methods.',
+      'Calling a function expression or arrow function BEFORE defining it — only function declarations are hoisted. "const fn = () => {};" is not available above its line.',
+      'Forgetting the "return" keyword inside a block body "{ }" — writing "const add = (a, b) => { a + b; }" returns undefined. You must write "return a + b;" inside braces.',
+      'Confusing parameters and arguments — parameters are the variable names in the function definition, arguments are the actual values you pass when calling.',
+      'Trying to use the "arguments" object inside an arrow function — it does not exist there. Use rest parameters "...args" instead.',
+      'Passing "null" expecting a default parameter to trigger — defaults only trigger for "undefined", not "null". "fn(null)" will use null, not the default.',
+      'Putting a rest parameter in the middle — "function f(a, ...b, c)" is a SyntaxError. Rest must always be last.',
     ],
     interviewQuestions: [
       {
         question: 'What is the difference between function declaration and function expression?',
-        answer: 'Declarations are hoisted — they can be called before they appear in code. Expressions (including arrow functions assigned to variables) are not hoisted and must be defined before use. Declarations use the function keyword as the first word of the statement.',
+        answer: 'A function declaration uses the "function" keyword as the very first word and has a name: "function add(a,b){return a+b}". Function declarations are HOISTED — JavaScript reads them before any code runs, so you can call them before their line in the code. A function expression assigns a function to a variable: "const add = function(a,b){return a+b};". Expressions are NOT hoisted — you must define them before calling. Arrow functions assigned to variables are also function expressions.',
         difficulty: 'beginner',
       },
       {
-        question: 'What are the differences between arrow functions and regular functions?',
-        answer: 'Arrow functions: no own this binding (inherits from enclosing scope), no arguments object, cannot be used as constructors (no new), no prototype property, cannot be used as generator functions. Regular functions have all of these.',
+        question: 'What are ALL the differences between arrow functions and regular functions?',
+        answer: '1) "this" binding: regular functions have their own dynamic "this" (depends on who calls them). Arrow functions have no own "this" — they inherit it lexically from the enclosing scope. 2) "arguments" object: regular functions have it, arrow functions do not. 3) Constructor: regular functions can be used with "new", arrow functions throw TypeError if you try "new arrowFn()". 4) Prototype: regular functions have a "prototype" property, arrow functions do not. 5) Generator: regular functions can be generators with "function*", arrow functions cannot. 6) Syntax: arrow functions are shorter, especially with implicit return.',
         difficulty: 'intermediate',
-        followUp: ['When should you NOT use an arrow function?'],
+        followUp: ['When should you NOT use an arrow function?', 'What does lexical this mean?'],
+      },
+      {
+        question: 'When should you use a regular function vs an arrow function?',
+        answer: 'Use regular functions for: (1) Object methods where you need "this" to refer to the object. (2) Constructor functions used with "new". (3) When you need the "arguments" object. (4) Generator functions. Use arrow functions for: (1) Short callbacks passed to map/filter/reduce/setTimeout. (2) Functions inside class methods/object methods where you want "this" to stay as the outer context. (3) Any function where you want a concise, readable expression.',
+        difficulty: 'intermediate',
+      },
+      {
+        question: 'What is a higher-order function? Give an example.',
+        answer: 'A higher-order function is a function that either (1) takes another function as an argument, or (2) returns a function. Examples: Array.map() takes a callback — higher-order. Array.filter() — higher-order. A function factory like "function makeAdder(x) { return (y) => x + y; }" — returns a function, so it is higher-order. They are fundamental to functional programming patterns in JavaScript.',
+        difficulty: 'intermediate',
+      },
+      {
+        question: 'What is the difference between parameters and arguments?',
+        answer: 'Parameters are the variable names listed in the function definition — they are placeholders. "function add(a, b)" — a and b are parameters. Arguments are the actual values passed when calling the function. "add(5, 3)" — 5 and 3 are arguments. When the function runs, parameter "a" receives argument 5, parameter "b" receives argument 3.',
+        difficulty: 'beginner',
+      },
+      {
+        question: 'What happens if you pass fewer arguments than there are parameters?',
+        answer: 'Any parameters without a corresponding argument receive the value "undefined". So "function add(a, b){ return a + b; }" called as "add(5)" gives NaN because b is undefined and 5 + undefined = NaN. This is why default parameters exist — "function add(a, b = 0)" ensures b is 0 when not passed.',
+        difficulty: 'beginner',
       },
     ],
     exercises: [
       {
         id: 'ex-fn-1',
+        title: 'Write a greeting factory',
+        description: 'Write a higher-order function "makeGreeter" that takes a greeting word (like "Hello" or "Hi") and returns a new function. That returned function takes a name and returns the full greeting string.',
+        starterCode: `function makeGreeter(greeting) {
+  // Return a function that takes 'name' and returns greeting + ", " + name + "!"
+}
+
+const hello = makeGreeter("Hello");
+const hey = makeGreeter("Hey");
+
+console.log(hello("Alice")); // "Hello, Alice!"
+console.log(hello("Bob"));   // "Hello, Bob!"
+console.log(hey("Carol"));   // "Hey, Carol!"`,
+        solution: `function makeGreeter(greeting) {
+  return function(name) {
+    return greeting + ", " + name + "!";
+  };
+}`,
+        hints: ['The outer function receives "greeting" and returns a new function', 'The inner function receives "name" and uses both "greeting" (from closure) and "name"'],
+        expectedOutput: 'Hello, Alice!\nHello, Bob!\nHey, Carol!',
+      },
+      {
+        id: 'ex-fn-2',
         title: 'Create a pipeline function',
-        description: 'Write a pipe function that takes any number of functions and returns a new function that applies them left to right.',
+        description: 'Write a "pipe" function that takes any number of functions as arguments and returns a new function. When called with a value, it applies all functions left to right, passing each result to the next.',
         starterCode: `function pipe(...fns) {
-  // Return a function that applies each fn left to right
-  // pipe(double, addOne)(5) → double(5) = 10, addOne(10) = 11
+  // Return a function that applies each fn from fns left to right
+  // pipe(double, addOne)(5) → double(5) = 10 → addOne(10) = 11
 }
 
 const double = x => x * 2;
@@ -1154,16 +1680,20 @@ console.log(transform(3)); // double(3)=6, addOne(6)=7, square(7)=49`,
         solution: `function pipe(...fns) {
   return (value) => fns.reduce((v, fn) => fn(v), value);
 }`,
-        hints: ['Use reduce on the fns array', 'The accumulator starts as the initial value'],
+        hints: ['Use rest parameters to collect all functions', 'Use Array.reduce — start with the initial value, apply each function to the accumulator', 'Return a function that takes the initial value'],
         expectedOutput: '49',
       },
     ],
     keyTakeaways: [
-      'Function declarations are hoisted; expressions are not',
-      'Arrow functions have no own this, arguments, or prototype',
-      'Default params: function f(x = 0) {}',
-      'Rest params: function f(...args) {} — collects into array',
-      'Functions are first-class: pass them around like values',
+      'Function declarations are hoisted — can be called before their line. Function expressions are not.',
+      'Parameters = names in the definition (placeholders). Arguments = actual values passed when calling.',
+      'Arrow functions: no own "this", no "arguments" object, cannot use "new", no "prototype".',
+      'Implicit return in arrow functions: "(a, b) => a + b" — only works without curly braces.',
+      'To return an object from an arrow function, wrap it in parentheses: "() => ({ key: value })".',
+      'Default parameters only trigger for "undefined", not for null, 0, or empty string.',
+      'Rest parameters collect remaining args into a real array: "function fn(a, ...rest)".',
+      'Functions are first-class values — you can store, pass, and return them like any variable.',
+      'A callback is a function passed as an argument. A higher-order function takes or returns a function.',
     ],
     prevLesson: 'loops',
     nextLesson: 'scope-and-closures',

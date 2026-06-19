@@ -49,11 +49,11 @@ export const tracks: Track[] = [
   {
     id: 'dsa',
     name: 'DSA',
-    description: 'Data structures and algorithms: arrays, trees, graphs, sorting, dynamic programming.',
+    description: 'Data structures and algorithms: arrays, trees, graphs, sorting, dynamic programming — Striver A2Z Sheet.',
     icon: 'DS',
-    available: false,
+    available: true,
     color: 'from-violet-500 to-purple-600',
-    lessonCount: 30,
+    lessonCount: 400,
   },
   {
     id: 'webdev',

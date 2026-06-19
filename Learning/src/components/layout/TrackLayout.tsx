@@ -15,9 +15,9 @@ export function TrackLayout({ children, track, lessons }: TrackLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#050508] flex flex-col">
+    <div className="h-screen bg-[#050508] flex flex-col overflow-hidden">
       {/* Mobile header */}
-      <header className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#07070b]/90 border-b border-slate-800/50 sticky top-0 z-20 backdrop-blur-sm">
+      <header className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#07070b]/90 border-b border-slate-800/50 shrink-0 z-20 backdrop-blur-sm">
         <button
           onClick={() => setSidebarOpen(true)}
           className="p-2 -ml-2 text-slate-500 hover:text-slate-200 transition-colors rounded-lg"
@@ -30,15 +30,15 @@ export function TrackLayout({ children, track, lessons }: TrackLayoutProps) {
           </svg>
         </button>
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center text-white font-bold text-xs">L</div>
+          <img src="/favicon.ico" alt="Logo" className="w-7 h-7 rounded-lg" />
           <span className="font-bold text-white text-sm">Learning</span>
         </Link>
         <div className="w-8" />
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden min-h-0">
         {/* Desktop sidebar */}
-        <div className="hidden lg:block sticky top-0 h-screen flex-shrink-0">
+        <div className="hidden lg:flex flex-col shrink-0">
           <Sidebar track={track} lessons={lessons} />
         </div>
 
