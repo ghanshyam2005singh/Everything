@@ -225,7 +225,7 @@ export default function HomePage() {
       </main>
 
       <footer className="relative z-10 border-t border-slate-800/60 py-8 text-center text-xs text-slate-600">
-        <p>Learning Platform — Deploy on Vercel. Built by Ghanshyam Singh.</p>
+        <p>Learning Platform — Built by <a href="https://ghanshyam-singh.me" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300">Ghanshyam Singh</a>.</p>
       </footer>
     </div>
   );

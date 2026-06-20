@@ -3,9 +3,10 @@ import { getLessons, getChallenges, getProjects, getInterviewQuestions } from '@
 import { notFound } from 'next/navigation';
 
 const TRACK_META: Record<string, { name: string; icon: string; color: string }> = {
-  javascript: { name: 'JavaScript', icon: 'JS', color: 'from-yellow-500 to-amber-500' },
-  databases:  { name: 'Databases',  icon: 'DB', color: 'from-sky-500 to-blue-600' },
-  devops:     { name: 'DevOps',     icon: 'DO', color: 'from-orange-500 to-amber-600' },
+  javascript:    { name: 'JavaScript',    icon: 'JS', color: 'from-yellow-500 to-amber-500' },
+  databases:     { name: 'Databases',     icon: 'DB', color: 'from-sky-500 to-blue-600' },
+  devops:        { name: 'DevOps',        icon: 'DO', color: 'from-orange-500 to-amber-600' },
+  'system-design': { name: 'System Design', icon: 'SD', color: 'from-teal-500 to-cyan-600' },
 };
 
 export default async function TrackOverviewPage({ params }: { params: Promise<{ track: string }> }) {
