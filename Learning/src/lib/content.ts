@@ -2,10 +2,12 @@ import { lessons } from '@/content/javascript/lessons';
 import { challenges } from '@/content/javascript/challenges';
 import { projects } from '@/content/javascript/projects';
 import { interviewQuestions } from '@/content/javascript/interview';
+import { lessons as databaseLessons } from '@/content/databases/lessons';
 import type { Lesson, Challenge, Project, InterviewQuestion } from '@/types';
 
 export function getLessons(track: string): Lesson[] {
   if (track === 'javascript') return lessons;
+  if (track === 'databases') return databaseLessons;
   return [];
 }
 

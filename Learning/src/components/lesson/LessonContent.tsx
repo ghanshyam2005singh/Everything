@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import type { Lesson } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import { CodeBlock } from '@/components/lesson/CodeBlock';
@@ -15,19 +17,82 @@ interface LessonContentProps {
   onToggleComplete: () => void;
 }
 
-function renderContent(content: string) {
-  return content.split('\n\n').map((para, i) => {
-    const html = para
-      .replace(/\*\*(.+?)\*\*/g, '<strong class="text-slate-100">$1</strong>')
-      .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-slate-800 text-violet-300 text-[0.85em] font-mono">$1</code>')
-      .replace(/\n/g, '<br/>');
-
-    if (para.startsWith('**') && !para.includes('\n')) {
-      return <p key={i} className="text-slate-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: html }} />;
+const mdComponents = {
+  h1: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h1 className="text-2xl font-bold text-white mt-8 mb-3">{children}</h1>
+  ),
+  h2: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h2 className="text-xl font-bold text-white mt-7 mb-3 border-b border-slate-800 pb-2">{children}</h2>
+  ),
+  h3: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h3 className="text-base font-semibold text-sky-300 mt-5 mb-2">{children}</h3>
+  ),
+  h4: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h4 className="text-sm font-semibold text-slate-300 mt-4 mb-1 uppercase tracking-wide">{children}</h4>
+  ),
+  p: ({ children }: React.HTMLAttributes<HTMLParagraphElement>) => (
+    <p className="text-slate-300 leading-relaxed mb-3">{children}</p>
+  ),
+  strong: ({ children }: React.HTMLAttributes<HTMLElement>) => (
+    <strong className="text-slate-100 font-semibold">{children}</strong>
+  ),
+  em: ({ children }: React.HTMLAttributes<HTMLElement>) => (
+    <em className="text-slate-300 italic">{children}</em>
+  ),
+  ul: ({ children }: React.HTMLAttributes<HTMLUListElement>) => (
+    <ul className="list-disc list-inside space-y-1.5 mb-4 text-slate-300 pl-2">{children}</ul>
+  ),
+  ol: ({ children }: React.HTMLAttributes<HTMLOListElement>) => (
+    <ol className="list-decimal list-inside space-y-1.5 mb-4 text-slate-300 pl-2">{children}</ol>
+  ),
+  li: ({ children }: React.HTMLAttributes<HTMLLIElement>) => (
+    <li className="text-slate-300 leading-relaxed">{children}</li>
+  ),
+  hr: () => <hr className="border-slate-700 my-6" />,
+  blockquote: ({ children }: React.HTMLAttributes<HTMLElement>) => (
+    <blockquote className="border-l-4 border-violet-500 pl-4 my-4 text-slate-400 italic">{children}</blockquote>
+  ),
+  code: ({ className, children, ...props }: React.HTMLAttributes<HTMLElement>) => {
+    const isBlock = className?.startsWith('language-');
+    if (isBlock) {
+      return (
+        <pre className="bg-slate-900 border border-slate-700/60 rounded-xl p-4 overflow-x-auto my-4">
+          <code className="text-sm font-mono text-slate-200 whitespace-pre">{children}</code>
+        </pre>
+      );
     }
-    return <p key={i} className="text-slate-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: html }} />;
-  });
-}
+    return (
+      <code className="px-1.5 py-0.5 rounded bg-slate-800 text-violet-300 text-[0.85em] font-mono" {...props}>
+        {children}
+      </code>
+    );
+  },
+  pre: ({ children }: React.HTMLAttributes<HTMLPreElement>) => (
+    <>{children}</>
+  ),
+  table: ({ children }: React.HTMLAttributes<HTMLTableElement>) => (
+    <div className="overflow-x-auto my-5">
+      <table className="w-full text-sm border-collapse">{children}</table>
+    </div>
+  ),
+  thead: ({ children }: React.HTMLAttributes<HTMLTableSectionElement>) => (
+    <thead className="bg-slate-800/60">{children}</thead>
+  ),
+  tbody: ({ children }: React.HTMLAttributes<HTMLTableSectionElement>) => (
+    <tbody className="divide-y divide-slate-800">{children}</tbody>
+  ),
+  tr: ({ children }: React.HTMLAttributes<HTMLTableRowElement>) => (
+    <tr className="hover:bg-slate-800/30 transition-colors">{children}</tr>
+  ),
+  th: ({ children }: React.HTMLAttributes<HTMLTableCellElement>) => (
+    <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-700">
+      {children}
+    </th>
+  ),
+  td: ({ children }: React.HTMLAttributes<HTMLTableCellElement>) => (
+    <td className="px-4 py-2.5 text-slate-300 border-b border-slate-800/60">{children}</td>
+  ),
+} as React.ComponentProps<typeof ReactMarkdown>['components'];
 
 export function LessonContent({ lesson, track, isComplete, onToggleComplete }: LessonContentProps) {
   const [openQuestions, setOpenQuestions] = useState<Set<number>>(new Set());
@@ -54,8 +119,10 @@ export function LessonContent({ lesson, track, isComplete, onToggleComplete }: L
       </div>
 
       {/* Content */}
-      <section className="space-y-4 mb-10">
-        {renderContent(lesson.content)}
+      <section className="mb-10">
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+          {lesson.content}
+        </ReactMarkdown>
       </section>
 
       {/* Code Examples */}

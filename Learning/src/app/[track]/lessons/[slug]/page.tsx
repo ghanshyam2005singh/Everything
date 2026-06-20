@@ -3,8 +3,10 @@ import { LessonClient } from './LessonClient';
 import { notFound } from 'next/navigation';
 
 export function generateStaticParams() {
-  const lessons = getLessons('javascript');
-  return lessons.map((l) => ({ track: 'javascript', slug: l.slug }));
+  const tracks = ['javascript', 'databases'];
+  return tracks.flatMap((track) =>
+    getLessons(track).map((l) => ({ track, slug: l.slug }))
+  );
 }
 
 export default async function LessonPage({ params }: { params: Promise<{ track: string; slug: string }> }) {
