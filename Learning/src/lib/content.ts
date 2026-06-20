@@ -2,12 +2,18 @@ import { lessons } from '@/content/javascript/lessons';
 import { challenges } from '@/content/javascript/challenges';
 import { projects } from '@/content/javascript/projects';
 import { interviewQuestions } from '@/content/javascript/interview';
+import { interviewQuestions as databaseInterviewQuestions } from '@/content/databases/interview';
+import { interviewQuestions as devopsInterviewQuestions } from '@/content/devops/interview';
 import { lessons as databaseLessons } from '@/content/databases/lessons';
+import { challenges as databaseChallenges } from '@/content/databases/challenges';
+import { lessons as devopsLessons } from '@/content/devops/lessons';
+import { challenges as devopsChallenges } from '@/content/devops/challenges';
 import type { Lesson, Challenge, Project, InterviewQuestion } from '@/types';
 
 export function getLessons(track: string): Lesson[] {
   if (track === 'javascript') return lessons;
   if (track === 'databases') return databaseLessons;
+  if (track === 'devops') return devopsLessons;
   return [];
 }
 
@@ -29,6 +35,8 @@ export function getLessonsByCategory(track: string): Record<string, Lesson[]> {
 
 export function getChallenges(track: string): Challenge[] {
   if (track === 'javascript') return challenges;
+  if (track === 'databases') return databaseChallenges;
+  if (track === 'devops') return devopsChallenges;
   return [];
 }
 
@@ -47,5 +55,7 @@ export function getProjectBySlug(track: string, slug: string): Project | undefin
 
 export function getInterviewQuestions(track: string): InterviewQuestion[] {
   if (track === 'javascript') return interviewQuestions;
+  if (track === 'databases') return databaseInterviewQuestions;
+  if (track === 'devops') return devopsInterviewQuestions;
   return [];
 }

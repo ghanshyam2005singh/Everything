@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { getLessons, getChallenges, getProjects } from '@/lib/content';
+import { getLessons, getChallenges, getProjects, getInterviewQuestions } from '@/lib/content';
 import { notFound } from 'next/navigation';
 
 const TRACK_META: Record<string, { name: string; icon: string; color: string }> = {
   javascript: { name: 'JavaScript', icon: 'JS', color: 'from-yellow-500 to-amber-500' },
   databases:  { name: 'Databases',  icon: 'DB', color: 'from-sky-500 to-blue-600' },
+  devops:     { name: 'DevOps',     icon: 'DO', color: 'from-orange-500 to-amber-600' },
 };
 
 export default async function TrackOverviewPage({ params }: { params: Promise<{ track: string }> }) {
@@ -15,13 +16,14 @@ export default async function TrackOverviewPage({ params }: { params: Promise<{ 
   const lessons = getLessons(track);
   const challenges = getChallenges(track);
   const projects = getProjects(track);
+  const interviewQuestions = getInterviewQuestions(track);
   const firstLesson = lessons[0];
 
   const sections = [
     { href: `/${track}/lessons`, icon: '📚', label: 'Lessons', count: lessons.length, desc: 'From basics to advanced' },
     { href: `/${track}/practice`, icon: '⚡', label: 'Challenges', count: challenges.length, desc: 'Coding challenges' },
-    { href: `/${track}/projects`, icon: '🛠', label: 'Projects', count: projects.length, desc: 'Build real things' },
-    { href: `/${track}/interview`, icon: '🎯', label: 'Interview', count: '50+', desc: 'Q&A with answers' },
+    ...(projects.length > 0 ? [{ href: `/${track}/projects`, icon: '🛠', label: 'Projects', count: projects.length, desc: 'Build real things' }] : []),
+    { href: `/${track}/interview`, icon: '🎯', label: 'Interview', count: interviewQuestions.length, desc: 'Q&A with answers' },
     { href: `/${track}/revision`, icon: '📋', label: 'Revision', count: '5', desc: 'Quick cheat sheets' },
     { href: `/${track}/playground`, icon: '▶', label: 'Playground', count: '∞', desc: 'Free code editor' },
   ];
