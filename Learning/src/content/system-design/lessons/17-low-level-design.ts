@@ -10,7 +10,7 @@ export const lowLevelDesignLesson: Lesson = {
   order: 17,
   difficulty: 'intermediate',
   estimatedTime: 50,
-  prevLesson: 'security-fundamentals',
+  prevLesson: 'high-level-design',
   nextLesson: 'design-patterns',
 
   content: `## What Is Low-Level Design?

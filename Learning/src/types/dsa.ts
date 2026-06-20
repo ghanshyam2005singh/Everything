@@ -30,6 +30,9 @@ export interface DSAApproach {
   steps: string[];
   complexity: { time: string; space: string };
   code?: string;
+  starterCode?: string;
+  solutionWithComments?: string;
+  expectedOutput?: string;
   dryRun?: string;
 }
 

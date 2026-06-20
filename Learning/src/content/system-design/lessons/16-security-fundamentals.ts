@@ -11,7 +11,7 @@ export const securityFundamentalsLesson: Lesson = {
   difficulty: 'intermediate',
   estimatedTime: 50,
   prevLesson: 'api-gateway',
-  nextLesson: 'low-level-design',
+  nextLesson: 'high-level-design',
 
   content: `## Why Security Is Non-Negotiable
 

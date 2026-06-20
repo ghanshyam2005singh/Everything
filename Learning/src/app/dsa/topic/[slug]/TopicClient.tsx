@@ -11,7 +11,7 @@ interface Props {
   section: DSASection;
 }
 
-/* ─── small helpers ────────────────────────────────────────────────── */
+/* ─── helpers ───────────────────────────────────────────────────────── */
 
 function DiffBadge({ d }: { d: string }) {
   const cls =
@@ -68,7 +68,6 @@ function Prose({ text }: { text: string }) {
   return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
-/* ─── section card ─────────────────────────────────────────────────── */
 function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`bg-[#111827] border border-gray-800 rounded-2xl p-6 ${className}`}>
@@ -85,11 +84,270 @@ function SectionTitle({ emoji, title }: { emoji: string; title: string }) {
   );
 }
 
+/* ─── auto-generate starter code from solution code ─────────────────── */
+function buildStarterCode(code: string): string {
+  if (!code) return `#include <bits/stdc++.h>
+using namespace std;
+
+// Write your solution here
+
+int main() {
+    // Test your function here
+    return 0;
+}`;
+
+  // Extract the function signature (first line)
+  const lines = code.split('\n');
+  const sig = lines[0].replace(/{$/, '').trim();
+
+  return `#include <bits/stdc++.h>
+using namespace std;
+
+// ── YOUR TASK: Fill in the function body ─────────────────────────────
+// Read the approach above, understand the algorithm, then code it here.
+${sig} {
+    // Write your solution here
+
+}
+
+// ── Test your solution ───────────────────────────────────────────────
+int main() {
+    // Add your own test cases here and print the result
+    // Compare with the examples shown above
+
+    // Example:
+    // vector<int> arr = {3, 1, 4, 1, 5, 9};
+    // cout << "Result: " << yourFunction(arr) << endl;
+
+    return 0;
+}`;
+}
+
+/* ─── Code Playground with Run + Feedback ───────────────────────────── */
+interface RunResult {
+  stdout: string;
+  stderr: string;
+  compileError: string;
+  exitCode: number;
+  error?: string;
+}
+
+function CodePlayground({ approach }: { approach: NonNullable<DSATopic['approaches']>[number] }) {
+  const initialCode = approach.starterCode ?? buildStarterCode(approach.code ?? '');
+  const [code, setCode] = useState(initialCode);
+  const [running, setRunning] = useState(false);
+  const [result, setResult] = useState<RunResult | null>(null);
+  const [showSolution, setShowSolution] = useState(false);
+
+  const editorHeight = Math.min(Math.max(initialCode.split('\n').length * 20 + 32, 200), 520);
+
+  async function runCode() {
+    setRunning(true);
+    setResult(null);
+    try {
+      const res = await fetch('/api/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+      const data: RunResult = await res.json();
+      setResult(data);
+    } catch {
+      setResult({ stdout: '', stderr: '', compileError: '', exitCode: 1, error: 'Network error — check your internet connection.' });
+    } finally {
+      setRunning(false);
+    }
+  }
+
+  function reset() {
+    setCode(initialCode);
+    setResult(null);
+  }
+
+  const hasCompileError = result && (result.compileError || (result.stderr && result.exitCode !== 0 && !result.stdout));
+  const hasOutput = result && result.stdout;
+  const hasRuntimeError = result && result.exitCode !== 0 && !result.compileError && result.stderr;
+
+  const solutionToShow = approach.solutionWithComments ?? approach.code;
+
+  return (
+    <div className="space-y-3">
+      {/* Editor header */}
+      <div className="flex items-center justify-between px-4 py-2.5 bg-[#1e1e2e] rounded-t-xl border border-gray-700/50 border-b-0">
+        <div className="flex items-center gap-2">
+          <span className="w-3 h-3 rounded-full bg-red-500/70" />
+          <span className="w-3 h-3 rounded-full bg-yellow-500/70" />
+          <span className="w-3 h-3 rounded-full bg-green-500/70" />
+          <span className="ml-2 text-[11px] text-gray-400 font-mono">solution.cpp — write your code</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={reset}
+            className="text-[11px] text-gray-500 hover:text-gray-300 transition-colors px-2 py-1 rounded"
+          >
+            Reset
+          </button>
+          <CopyBtn text={code} />
+        </div>
+      </div>
+
+      {/* Editable Monaco Editor */}
+      <div className="border border-gray-700/50 border-t-0 rounded-b-xl overflow-hidden">
+        <MonacoEditor
+          height={editorHeight}
+          language="cpp"
+          value={code}
+          theme="vs-dark"
+          onChange={(val) => setCode(val ?? '')}
+          options={{
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            fontSize: 13,
+            lineNumbers: 'on',
+            folding: true,
+            scrollbar: { vertical: 'auto', horizontal: 'auto' },
+            renderLineHighlight: 'line',
+            wordWrap: 'on',
+            suggestOnTriggerCharacters: true,
+            quickSuggestions: true,
+          }}
+        />
+      </div>
+
+      {/* Run button */}
+      <button
+        onClick={runCode}
+        disabled={running}
+        className={`w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+          running
+            ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+            : 'bg-violet-600 hover:bg-violet-500 text-white shadow-lg shadow-violet-900/30 hover:shadow-violet-800/40'
+        }`}
+      >
+        {running ? (
+          <>
+            <span className="inline-block w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+            Compiling & Running...
+          </>
+        ) : (
+          <>▶ Run Code</>
+        )}
+      </button>
+
+      {/* Result display */}
+      {result && (
+        <div className="space-y-3">
+          {/* Network/API error */}
+          {result.error && (
+            <div className="bg-red-950/40 border border-red-700/50 rounded-xl p-4">
+              <p className="text-sm font-semibold text-red-400 mb-1">⚠ Error</p>
+              <p className="text-xs text-red-300">{result.error}</p>
+            </div>
+          )}
+
+          {/* Compile error */}
+          {hasCompileError && (
+            <div className="bg-red-950/40 border border-red-700/50 rounded-xl p-4">
+              <p className="text-sm font-semibold text-red-400 mb-2">✗ Compile Error</p>
+              <pre className="text-xs text-red-300 whitespace-pre-wrap font-mono leading-relaxed overflow-x-auto">
+                {result.compileError || result.stderr}
+              </pre>
+              <div className="mt-3 pt-3 border-t border-red-800/40">
+                <p className="text-[11px] text-red-400 font-semibold mb-1">Common fixes:</p>
+                <ul className="text-[11px] text-red-300 space-y-1">
+                  <li>• Missing semicolons <code className="text-red-200">;</code> at end of statements</li>
+                  <li>• Typo in variable/function names</li>
+                  <li>• Missing <code className="text-red-200">#include &lt;bits/stdc++.h&gt;</code> at the top</li>
+                  <li>• Missing <code className="text-red-200">return</code> statement</li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* Runtime error */}
+          {hasRuntimeError && (
+            <div className="bg-orange-950/40 border border-orange-700/50 rounded-xl p-4">
+              <p className="text-sm font-semibold text-orange-400 mb-2">⚠ Runtime Error (exit code {result.exitCode})</p>
+              <pre className="text-xs text-orange-300 whitespace-pre-wrap font-mono">{result.stderr}</pre>
+              <div className="mt-3 pt-3 border-t border-orange-800/40">
+                <p className="text-[11px] text-orange-400 font-semibold mb-1">Common causes:</p>
+                <ul className="text-[11px] text-orange-300 space-y-1">
+                  <li>• Array index out of bounds — accessing arr[i] when i &gt;= arr.size()</li>
+                  <li>• Accessing empty vector — arr[0] when arr is empty</li>
+                  <li>• Infinite loop — loop condition never becomes false</li>
+                  <li>• Stack overflow — too deep recursion</li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* Success output */}
+          {hasOutput && (
+            <div className="bg-green-950/30 border border-green-700/40 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-semibold text-green-400">✓ Output</p>
+                {result.exitCode === 0 && (
+                  <span className="text-[10px] text-green-600 bg-green-900/30 px-2 py-0.5 rounded-full">exit 0</span>
+                )}
+              </div>
+              <pre className="text-sm text-green-200 whitespace-pre-wrap font-mono leading-relaxed">{result.stdout}</pre>
+              {approach.expectedOutput && (
+                <div className="mt-3 pt-3 border-t border-green-800/30">
+                  <p className="text-[11px] text-green-600 font-semibold mb-1">Expected output:</p>
+                  <pre className="text-[11px] text-green-300 font-mono">{approach.expectedOutput}</pre>
+                  {result.stdout.trim() === approach.expectedOutput.trim() ? (
+                    <p className="mt-2 text-xs font-bold text-green-400">🎉 Perfect match! Your solution is correct.</p>
+                  ) : (
+                    <p className="mt-2 text-xs text-amber-400">⚠ Output doesn't match expected. Check your logic above.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Full Solution with Comments */}
+      <div className="mt-4 border border-gray-700/40 rounded-xl overflow-hidden">
+        <button
+          onClick={() => setShowSolution((s) => !s)}
+          className="w-full flex items-center justify-between px-4 py-3 bg-gray-800/60 hover:bg-gray-800 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-sm">🔑</span>
+            <span className="text-sm font-semibold text-gray-300">
+              {approach.solutionWithComments ? 'Full Solution with Line-by-Line Explanation' : 'Full Solution Code'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {!showSolution && (
+              <span className="text-[10px] text-gray-500 bg-gray-700 px-2 py-0.5 rounded-full">Hidden — try first!</span>
+            )}
+            <span className="text-gray-500 text-sm">{showSolution ? '▲' : '▼'}</span>
+          </div>
+        </button>
+
+        {showSolution && solutionToShow && (
+          <div className="border-t border-gray-700/40">
+            {approach.solutionWithComments && (
+              <div className="px-4 py-2.5 bg-blue-950/30 border-b border-blue-800/30">
+                <p className="text-[11px] text-blue-400">
+                  📖 Every line is explained. Read carefully — understand WHY each line is written, not just WHAT it does.
+                </p>
+              </div>
+            )}
+            <ReadonlyCode code={solutionToShow} language="cpp" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ─── LESSON VIEW ──────────────────────────────────────────────────── */
 function LessonView({ topic }: { topic: DSATopic }) {
   return (
     <div className="space-y-6">
-      {/* Introduction */}
       {topic.introduction && (
         <Card className="border-l-4 border-l-blue-500">
           <SectionTitle emoji="💡" title="What is this?" />
@@ -97,7 +355,6 @@ function LessonView({ topic }: { topic: DSATopic }) {
         </Card>
       )}
 
-      {/* Theory */}
       {topic.theory && (
         <Card>
           <SectionTitle emoji="📖" title="Theory" />
@@ -111,7 +368,6 @@ function LessonView({ topic }: { topic: DSATopic }) {
         </Card>
       )}
 
-      {/* Complexity */}
       {topic.complexity && (
         <Card>
           <SectionTitle emoji="⚡" title="Time & Space Complexity" />
@@ -135,16 +391,13 @@ function LessonView({ topic }: { topic: DSATopic }) {
         </Card>
       )}
 
-      {/* Code Examples */}
       {topic.codeExamples && topic.codeExamples.length > 0 && (
         <Card>
           <SectionTitle emoji="💻" title="Code Examples" />
           <div className="space-y-6">
             {topic.codeExamples.map((ex, i) => (
               <div key={i}>
-                {ex.title && (
-                  <p className="text-sm font-semibold text-gray-300 mb-2">{ex.title}</p>
-                )}
+                {ex.title && <p className="text-sm font-semibold text-gray-300 mb-2">{ex.title}</p>}
                 <ReadonlyCode code={ex.code} language={ex.language ?? 'cpp'} />
                 {ex.explanation && (
                   <p className="mt-2 text-xs text-gray-400 leading-relaxed">{ex.explanation}</p>
@@ -161,7 +414,6 @@ function LessonView({ topic }: { topic: DSATopic }) {
         </Card>
       )}
 
-      {/* Revision Notes */}
       {topic.revisionNotes && topic.revisionNotes.length > 0 && (
         <Card className="border-l-4 border-l-amber-500">
           <SectionTitle emoji="⚡" title="Quick Revision" />
@@ -176,7 +428,6 @@ function LessonView({ topic }: { topic: DSATopic }) {
         </Card>
       )}
 
-      {/* Key Takeaways */}
       {topic.keyTakeaways && topic.keyTakeaways.length > 0 && (
         <Card className="border-l-4 border-l-green-500">
           <SectionTitle emoji="🎯" title="Key Takeaways" />
@@ -199,7 +450,6 @@ function ProblemView({ topic }: { topic: DSATopic }) {
   const [activeApproach, setActiveApproach] = useState(0);
   const [showHints, setShowHints] = useState(false);
   const [revealedHints, setRevealedHints] = useState<Set<number>>(new Set());
-  const [showSolution, setShowSolution] = useState(false);
 
   const ap = topic.approaches?.[activeApproach];
 
@@ -210,7 +460,7 @@ function ProblemView({ topic }: { topic: DSATopic }) {
   return (
     <div className="space-y-6">
 
-      {/* ── LeetCode link — very prominent ── */}
+      {/* LeetCode link */}
       {topic.leetcodeUrl && (
         <a
           href={topic.leetcodeUrl}
@@ -229,7 +479,7 @@ function ProblemView({ topic }: { topic: DSATopic }) {
         </a>
       )}
 
-      {/* ── Problem Statement ── */}
+      {/* Problem Statement */}
       {topic.problemStatement && (
         <Card>
           <SectionTitle emoji="📋" title="Problem Statement" />
@@ -237,7 +487,6 @@ function ProblemView({ topic }: { topic: DSATopic }) {
             <Prose text={topic.problemStatement} />
           </p>
 
-          {/* Pattern tag */}
           {topic.pattern && (
             <div className="flex items-center gap-2 mb-3">
               <span className="text-xs text-gray-500">Pattern:</span>
@@ -247,7 +496,6 @@ function ProblemView({ topic }: { topic: DSATopic }) {
             </div>
           )}
 
-          {/* Constraints */}
           {topic.constraints && topic.constraints.length > 0 && (
             <div className="mt-4">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Constraints</p>
@@ -263,7 +511,7 @@ function ProblemView({ topic }: { topic: DSATopic }) {
         </Card>
       )}
 
-      {/* ── Examples ── */}
+      {/* Examples */}
       {topic.examples && topic.examples.length > 0 && (
         <Card>
           <SectionTitle emoji="🧪" title="Examples" />
@@ -295,12 +543,12 @@ function ProblemView({ topic }: { topic: DSATopic }) {
         </Card>
       )}
 
-      {/* ── Approach & Algorithm (teaching section) ── */}
+      {/* Approach & Algorithm → Code Playground */}
       {topic.approaches && topic.approaches.length > 0 && (
         <Card>
           <SectionTitle emoji="🧠" title="How to Think & Solve" />
 
-          {/* Approach tabs if multiple */}
+          {/* Approach tabs */}
           {topic.approaches.length > 1 && (
             <div className="flex gap-2 mb-6 flex-wrap">
               {topic.approaches.map((a, i) => (
@@ -321,13 +569,13 @@ function ProblemView({ topic }: { topic: DSATopic }) {
 
           {ap && (
             <div className="space-y-5">
-              {/* Intuition — plain English */}
+              {/* Intuition */}
               <div className="bg-blue-950/40 border border-blue-800/40 rounded-xl p-4">
                 <p className="text-[11px] font-bold text-blue-400 uppercase tracking-widest mb-2">Intuition / Core Idea</p>
                 <p className="text-sm text-blue-100 leading-relaxed"><Prose text={ap.intuition} /></p>
               </div>
 
-              {/* Step-by-step algorithm */}
+              {/* Steps */}
               {ap.steps && ap.steps.length > 0 && (
                 <div>
                   <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3">Step-by-Step Algorithm</p>
@@ -366,28 +614,29 @@ function ProblemView({ topic }: { topic: DSATopic }) {
                 </div>
               )}
 
-              {/* Code — now inside a teaching frame, not shown as "solution" */}
-              {ap.code && (
-                <div>
-                  <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3">
-                    Code — Study & Understand Line by Line
+              {/* Code Playground — blank editor + run */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">
+                    Now Write It Yourself
                   </p>
-                  <div className="bg-amber-950/20 border border-amber-700/30 rounded-t-xl px-4 py-2.5">
-                    <p className="text-[11px] text-amber-400">
-                      💡 Read each line carefully. Understand the logic before trying to write it yourself.
-                    </p>
-                  </div>
-                  <div className="rounded-b-xl overflow-hidden">
-                    <ReadonlyCode code={ap.code} language="cpp" />
-                  </div>
+                  <span className="text-[10px] text-violet-400 bg-violet-900/30 px-2 py-0.5 rounded-full border border-violet-700/30">
+                    Run your code below
+                  </span>
                 </div>
-              )}
+                <div className="bg-violet-950/20 border border-violet-700/20 rounded-xl px-4 py-3 mb-3">
+                  <p className="text-[11px] text-violet-300">
+                    ✏️ The editor starts with just the function signature. Read the algorithm steps above, then implement the body. Click <strong>Run Code</strong> to test it. If it fails, read the error — it tells you exactly what went wrong.
+                  </p>
+                </div>
+                <CodePlayground approach={ap} />
+              </div>
             </div>
           )}
         </Card>
       )}
 
-      {/* ── Hints — one by one reveal ── */}
+      {/* Hints */}
       {topic.hints && topic.hints.length > 0 && (
         <Card>
           <button
@@ -431,46 +680,7 @@ function ProblemView({ topic }: { topic: DSATopic }) {
         </Card>
       )}
 
-      {/* ── Full Solution — hidden by default ── */}
-      {topic.solution && (
-        <Card className={showSolution ? 'border-green-800/50' : ''}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="flex items-center gap-2 text-base font-bold text-gray-100">
-              <span>🔑</span> Full Solution Code
-            </h3>
-            {!showSolution && (
-              <span className="text-[11px] text-gray-500 bg-gray-800 px-2 py-1 rounded">Hidden</span>
-            )}
-          </div>
-
-          {!showSolution ? (
-            <div className="text-center py-8">
-              <p className="text-sm text-gray-500 mb-2">Have you attempted the problem yourself?</p>
-              <p className="text-xs text-gray-600 mb-5">
-                Try for at least 30 minutes before looking at the full solution.
-                Use the hints above if you're stuck.
-              </p>
-              <button
-                onClick={() => setShowSolution(true)}
-                className="px-5 py-2.5 bg-green-900/40 border border-green-700/50 text-green-400 rounded-xl text-sm font-semibold hover:bg-green-900/60 transition-colors"
-              >
-                I've tried — Show Solution
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="bg-green-950/20 border border-green-800/30 rounded-xl px-4 py-3">
-                <p className="text-xs text-green-400">
-                  ✓ Compare your solution with this. Understanding differences is more valuable than copying.
-                </p>
-              </div>
-              <ReadonlyCode code={topic.solution} language="cpp" />
-            </div>
-          )}
-        </Card>
-      )}
-
-      {/* ── Key Takeaways ── */}
+      {/* Key Takeaways */}
       {topic.keyTakeaways && topic.keyTakeaways.length > 0 && (
         <Card className="border-l-4 border-l-violet-500">
           <SectionTitle emoji="🎯" title="Key Takeaways" />
@@ -540,14 +750,14 @@ export default function TopicClient({ topic, section }: Props) {
         {/* Content */}
         {topic.type === 'lesson' ? <LessonView topic={topic} /> : <ProblemView topic={topic} />}
 
-        {/* Interview questions shared section */}
+        {/* Interview questions */}
         {topic.interviewQuestions && topic.interviewQuestions.length > 0 && (
           <div className="mt-6">
             <InterviewQs questions={topic.interviewQuestions} />
           </div>
         )}
 
-        {/* Bottom nav placeholder */}
+        {/* Bottom nav */}
         <div className="mt-10 pt-6 border-t border-gray-800 flex items-center justify-between">
           <a href="/dsa" className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1.5">
             ← All Sections

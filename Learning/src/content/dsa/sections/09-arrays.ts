@@ -37,6 +37,69 @@ export const arraysSection: DSASection = {
         if (arr[i] > maxVal) maxVal = arr[i];
     return maxVal;
 }`,
+              starterCode: `#include <bits/stdc++.h>   // includes vector, algorithm, etc.
+using namespace std;       // lets us write vector instead of std::vector
+
+// vector<int>& arr  →  a REFERENCE to a vector of integers
+// & means reference: we borrow the array without copying it (efficient)
+// Without &, C++ would copy the entire array (slow for large arrays)
+int largestElement(vector<int>& arr) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {3, 1, 4, 1, 5, 9, 2, 6};
+    cout << largestElement(test1) << endl;  // Expected: 9
+
+    vector<int> test2 = {-5, -1, -8, -3};
+    cout << largestElement(test2) << endl;  // Expected: -1
+
+    vector<int> test3 = {42};
+    cout << largestElement(test3) << endl;  // Expected: 42
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+// vector<int>& arr = reference to a vector of integers (no copy)
+int largestElement(vector<int>& arr) {
+
+    // Start tracking maximum from the first element
+    // WHY arr[0] and not 0?
+    //   If all elements are negative like {-5, -3, -1},
+    //   starting from 0 would wrongly return 0 (not in array)
+    //   arr[0] always gives us a real element to compare against
+    int maxVal = arr[0];
+
+    // Loop from index 1 (second element) to last element
+    // arr.size() returns how many elements are in the array
+    // i = 1 because we already "used" arr[0] as our initial max
+    for (int i = 1; i < arr.size(); i++) {
+
+        // Check: is current element bigger than our tracked max?
+        if (arr[i] > maxVal) {
+            maxVal = arr[i];  // update max — we found something bigger
+        }
+    }
+
+    // After scanning all elements, maxVal is the largest
+    return maxVal;
+}
+
+int main() {
+    vector<int> test1 = {3, 1, 4, 1, 5, 9, 2, 6};
+    cout << largestElement(test1) << endl;  // 9
+
+    vector<int> test2 = {-5, -1, -8, -3};
+    cout << largestElement(test2) << endl;  // -1
+
+    return 0;
+}`,
+              expectedOutput: `9
+-1
+42`,
             },
           ],
           hints: [
@@ -78,6 +141,74 @@ export const arraysSection: DSASection = {
     }
     return second == INT_MIN ? -1 : second;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// INT_MIN = the smallest possible integer in C++ = -2,147,483,648
+// It acts as a "sentinel" — any real array value will be greater than it
+int secondLargest(vector<int>& arr) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {3, 1, 4, 1, 5, 9};
+    cout << secondLargest(test1) << endl;  // Expected: 5
+
+    vector<int> test2 = {5, 5, 5};
+    cout << secondLargest(test2) << endl;  // Expected: -1 (all same)
+
+    vector<int> test3 = {-1, -3, -2};
+    cout << secondLargest(test3) << endl;  // Expected: -2
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int secondLargest(vector<int>& arr) {
+
+    // INT_MIN = -2,147,483,648 (lowest possible int)
+    // We use it as a "dummy minimum" — any real value in the array
+    // will be larger than INT_MIN, so these get overwritten immediately
+    int first = INT_MIN;   // will hold the LARGEST value seen so far
+    int second = INT_MIN;  // will hold the SECOND LARGEST seen so far
+
+    // Range-based for loop: "for each element x in arr"
+    // Equivalent to: for (int i = 0; i < arr.size(); i++) { int x = arr[i]; ... }
+    for (int x : arr) {
+
+        if (x > first) {
+            // x is bigger than our current max
+            // The old max becomes the new second-largest
+            second = first;  // push current first down to second
+            first = x;       // x is the new maximum
+        }
+        else if (x > second && x != first) {
+            // x is not the max, but it's bigger than second-largest
+            // AND it's not equal to first (we want DISTINCT values)
+            second = x;
+        }
+        // If x <= second or x == first: ignore it, contributes nothing
+    }
+
+    // If second is still INT_MIN, all elements were the same (e.g., {5,5,5})
+    // In that case, no second largest exists → return -1
+    return second == INT_MIN ? -1 : second;
+}
+
+int main() {
+    vector<int> test1 = {3, 1, 4, 1, 5, 9};
+    cout << secondLargest(test1) << endl;  // 5
+
+    vector<int> test2 = {5, 5, 5};
+    cout << secondLargest(test2) << endl;  // -1
+
+    return 0;
+}`,
+              expectedOutput: `5
+-1
+-2`,
             },
           ],
           hints: [
@@ -117,6 +248,63 @@ export const arraysSection: DSASection = {
         if (arr[i] > arr[i + 1]) return false;
     return true;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// bool = return type that is either true or false
+// true means sorted, false means not sorted
+bool isSorted(vector<int>& arr) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {1, 2, 3, 4, 5};
+    cout << isSorted(test1) << endl;  // Expected: 1 (true)
+
+    vector<int> test2 = {1, 3, 2, 4};
+    cout << isSorted(test2) << endl;  // Expected: 0 (false)
+
+    vector<int> test3 = {5};
+    cout << isSorted(test3) << endl;  // Expected: 1 (single element is sorted)
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+// bool = a type that holds either true (1) or false (0)
+bool isSorted(vector<int>& arr) {
+
+    // We check every PAIR of adjacent elements: (arr[0],arr[1]), (arr[1],arr[2]), ...
+    // We stop at index n-2 because we compare arr[i] with arr[i+1]
+    // If i went to n-1, then arr[i+1] = arr[n] which is out of bounds!
+    //
+    // i + 1 < arr.size() is the safe way to say i < n-1
+    // (arr.size() returns an UNSIGNED number, so n-1 could overflow if n=0)
+    for (int i = 0; i + 1 < arr.size(); i++) {
+
+        // If any adjacent pair is out of order, array is NOT sorted
+        // Return false immediately — no need to check the rest
+        if (arr[i] > arr[i + 1]) return false;
+    }
+
+    // If we checked all pairs and none violated the rule → sorted!
+    return true;
+}
+
+int main() {
+    vector<int> test1 = {1, 2, 3, 4, 5};
+    cout << isSorted(test1) << endl;  // 1 (true)
+
+    vector<int> test2 = {1, 3, 2, 4};
+    cout << isSorted(test2) << endl;  // 0 (false)
+
+    return 0;
+}`,
+              expectedOutput: `1
+0
+1`,
             },
           ],
           hints: [
@@ -158,6 +346,72 @@ export const arraysSection: DSASection = {
         if (nums[j] != nums[i]) nums[++i] = nums[j];
     return i + 1;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// The function modifies the array IN-PLACE and returns the new length
+// "In-place" means: no extra array, we reuse the same memory
+int removeDuplicates(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {1, 1, 2, 2, 3};
+    int k1 = removeDuplicates(test1);
+    cout << k1 << endl;  // Expected: 3 (unique: 1, 2, 3)
+
+    vector<int> test2 = {0, 0, 1, 1, 1, 2, 2, 3, 3, 4};
+    int k2 = removeDuplicates(test2);
+    cout << k2 << endl;  // Expected: 5 (unique: 0, 1, 2, 3, 4)
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int removeDuplicates(vector<int>& nums) {
+
+    // Edge case: empty array has 0 unique elements
+    if (nums.empty()) return 0;
+
+    // i = "write pointer" — points to the last confirmed unique element
+    // Everything at index 0..i is our "unique region"
+    int i = 0;
+
+    // j = "read pointer" — scans forward looking for new unique values
+    // Start at 1 because nums[0] is always included as the first unique
+    for (int j = 1; j < nums.size(); j++) {
+
+        // Is nums[j] different from the last unique element we wrote (nums[i])?
+        if (nums[j] != nums[i]) {
+
+            // Found a new unique value!
+            // ++i advances i FIRST, then we assign: nums[i] = nums[j]
+            // (this is "pre-increment" — different from i++ which would use old i)
+            nums[++i] = nums[j];
+        }
+        // If nums[j] == nums[i]: it's a duplicate, skip it (j advances, i stays)
+    }
+
+    // The unique region is indices 0 to i (inclusive)
+    // Length = i + 1 (because arrays are 0-indexed)
+    return i + 1;
+}
+
+int main() {
+    vector<int> nums = {1, 1, 2, 2, 3};
+    int k = removeDuplicates(nums);
+    cout << k << endl;  // 3
+
+    // First k elements of nums are now {1, 2, 3, ...}
+    for (int i = 0; i < k; i++) cout << nums[i] << " ";
+    cout << endl;  // 1 2 3
+
+    return 0;
+}`,
+              expectedOutput: `3
+5`,
             },
           ],
           hints: [
@@ -197,6 +451,65 @@ export const arraysSection: DSASection = {
     for (int i = 0; i < n - 1; i++) arr[i] = arr[i + 1];
     arr[n - 1] = temp;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// void = the function returns nothing (modifies arr in-place)
+// Left rotate by 1: {1,2,3,4,5} → {2,3,4,5,1}
+void leftRotateByOne(vector<int>& arr) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {1, 2, 3, 4, 5};
+    leftRotateByOne(test1);
+    for (int x : test1) cout << x << " ";
+    cout << endl;  // Expected: 2 3 4 5 1
+
+    vector<int> test2 = {9, 8, 7};
+    leftRotateByOne(test2);
+    for (int x : test2) cout << x << " ";
+    cout << endl;  // Expected: 8 7 9
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+// void means this function returns nothing — it modifies arr directly
+void leftRotateByOne(vector<int>& arr) {
+
+    // arr.size() returns the number of elements (type: size_t = unsigned integer)
+    // We store it in int n for convenience
+    int n = arr.size();
+
+    // Save the first element before we overwrite it
+    // If we don't save it, it gets lost when we do arr[0] = arr[1]
+    int temp = arr[0];
+
+    // Shift every element one step to the LEFT
+    // arr[0] gets arr[1], arr[1] gets arr[2], ..., arr[n-2] gets arr[n-1]
+    // We stop at i < n-1 because arr[n-1] is filled from temp, not from arr[n]
+    for (int i = 0; i < n - 1; i++) {
+        arr[i] = arr[i + 1];  // shift element at position i+1 to position i
+    }
+
+    // Place the saved first element at the last position
+    // This completes the rotation
+    arr[n - 1] = temp;
+}
+
+int main() {
+    vector<int> arr = {1, 2, 3, 4, 5};
+    leftRotateByOne(arr);
+    for (int x : arr) cout << x << " ";  // 2 3 4 5 1
+    cout << endl;
+
+    return 0;
+}`,
+              expectedOutput: `2 3 4 5 1
+8 7 9 `,
             },
           ],
           hints: [
@@ -237,6 +550,64 @@ export const arraysSection: DSASection = {
     reverse(arr.begin() + k, arr.end());
     reverse(arr.begin(), arr.end());
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// reverse(start, end) is a built-in function that reverses elements in range [start, end)
+// arr.begin() points to arr[0], arr.end() points PAST the last element
+void leftRotateK(vector<int>& arr, int k) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {1, 2, 3, 4, 5};
+    leftRotateK(test1, 2);
+    for (int x : test1) cout << x << " ";
+    cout << endl;  // Expected: 3 4 5 1 2
+
+    vector<int> test2 = {1, 2, 3};
+    leftRotateK(test2, 7);  // 7 % 3 = 1
+    for (int x : test2) cout << x << " ";
+    cout << endl;  // Expected: 2 3 1
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+void leftRotateK(vector<int>& arr, int k) {
+
+    int n = arr.size();
+
+    // If k = 7 and n = 3, rotating 7 times = rotating 1 time (7 % 3 = 1)
+    // % is the modulo operator — gives the remainder
+    k %= n;
+
+    // The THREE REVERSAL TRICK — mathematical insight:
+    // To left rotate by k:
+    // Step 1: reverse the first k elements      {1,2} → {2,1}
+    // Step 2: reverse the remaining n-k elements {3,4,5} → {5,4,3}
+    // Step 3: reverse the entire array           {2,1,5,4,3} → {3,4,5,1,2} ✓
+
+    // arr.begin() = iterator (pointer) to first element
+    // arr.begin() + k = iterator to element at index k
+    // arr.end() = iterator to ONE PAST the last element
+    reverse(arr.begin(), arr.begin() + k);  // reverse first k elements
+    reverse(arr.begin() + k, arr.end());    // reverse rest of array
+    reverse(arr.begin(), arr.end());         // reverse entire array
+}
+
+int main() {
+    vector<int> arr = {1, 2, 3, 4, 5};
+    leftRotateK(arr, 2);
+    for (int x : arr) cout << x << " ";  // 3 4 5 1 2
+    cout << endl;
+
+    return 0;
+}`,
+              expectedOutput: `3 4 5 1 2
+2 3 1 `,
             },
             {
               name: 'Extra Array Copy',
@@ -253,6 +624,51 @@ export const arraysSection: DSASection = {
     for (int i = k; i < n; i++) arr[i - k] = arr[i];
     for (int i = 0; i < k; i++) arr[n - k + i] = temp[i];
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// This approach uses an extra temporary array to save the first k elements
+void leftRotateK(vector<int>& arr, int k) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {1, 2, 3, 4, 5};
+    leftRotateK(test1, 2);
+    for (int x : test1) cout << x << " ";
+    cout << endl;  // Expected: 3 4 5 1 2
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+void leftRotateK(vector<int>& arr, int k) {
+
+    int n = arr.size();
+    k %= n;  // handle k >= n (e.g., k=7, n=3 → k=1)
+
+    // Create a temporary vector to store the first k elements
+    // vector<int> temp(arr.begin(), arr.begin() + k) creates a new vector
+    // initialized with elements from index 0 to k-1
+    // This is like: temp = {arr[0], arr[1], ..., arr[k-1]}
+    vector<int> temp(arr.begin(), arr.begin() + k);
+
+    // Shift elements from index k onwards to the left by k positions
+    // arr[k] goes to arr[0], arr[k+1] goes to arr[1], etc.
+    for (int i = k; i < n; i++) {
+        arr[i - k] = arr[i];
+    }
+
+    // Copy the saved first-k elements to the END of the array
+    // arr[n-k] gets temp[0], arr[n-k+1] gets temp[1], etc.
+    for (int i = 0; i < k; i++) {
+        arr[n - k + i] = temp[i];
+    }
+}`,
+              expectedOutput: `3 4 5 1 2
+`,
             },
           ],
           hints: [
@@ -292,6 +708,65 @@ export const arraysSection: DSASection = {
     for (int i = 0; i < nums.size(); i++)
         if (nums[i] != 0) swap(nums[i], nums[j++]);
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// swap(a, b) swaps values of a and b — built-in C++ function
+// Goal: move all zeros to end while keeping non-zero order intact
+void moveZeroes(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {0, 1, 0, 3, 12};
+    moveZeroes(test1);
+    for (int x : test1) cout << x << " ";
+    cout << endl;  // Expected: 1 3 12 0 0
+
+    vector<int> test2 = {0, 0, 1};
+    moveZeroes(test2);
+    for (int x : test2) cout << x << " ";
+    cout << endl;  // Expected: 1 0 0
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+void moveZeroes(vector<int>& nums) {
+
+    // j = "write position" — where the next non-zero element should go
+    // Think of j as the boundary: everything before j is non-zero
+    int j = 0;
+
+    // i scans every element from left to right
+    for (int i = 0; i < nums.size(); i++) {
+
+        if (nums[i] != 0) {
+            // Found a non-zero element!
+            // swap(nums[i], nums[j]) exchanges the values at positions i and j
+            // This moves the non-zero to position j, and any zero at j goes to i
+            // j++ increments j AFTER the swap (post-increment)
+            swap(nums[i], nums[j++]);
+        }
+        // If nums[i] == 0: skip it, j doesn't move, i moves forward
+    }
+
+    // After the loop: all non-zeros are packed at the front (indices 0..j-1)
+    // All zeros are at the back (indices j..n-1)
+}
+
+int main() {
+    vector<int> nums = {0, 1, 0, 3, 12};
+    moveZeroes(nums);
+    for (int x : nums) cout << x << " ";  // 1 3 12 0 0
+    cout << endl;
+
+    return 0;
+}`,
+              expectedOutput: `1 3 12 0 0
+1 0 0 `,
             },
           ],
           hints: [
@@ -328,6 +803,58 @@ export const arraysSection: DSASection = {
         if (arr[i] == target) return i;
     return -1;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Returns the INDEX where target is found, or -1 if not found
+int linearSearch(vector<int>& arr, int target) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> arr = {4, 2, 7, 1, 9, 3};
+
+    cout << linearSearch(arr, 7) << endl;   // Expected: 2 (index of 7)
+    cout << linearSearch(arr, 5) << endl;   // Expected: -1 (5 not in array)
+    cout << linearSearch(arr, 4) << endl;   // Expected: 0 (index of 4)
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+// int target = the value we're searching for (passed by value, not reference)
+// Returning int: either the index (0, 1, 2...) or -1 if not found
+int linearSearch(vector<int>& arr, int target) {
+
+    // Check each element one by one from left to right
+    // i goes from 0 (first index) to arr.size()-1 (last index)
+    for (int i = 0; i < arr.size(); i++) {
+
+        // arr[i] accesses the element at position i
+        // == is equality check (= is assignment, == is comparison)
+        if (arr[i] == target) {
+            return i;  // Found it! Return the index immediately (early exit)
+        }
+    }
+
+    // If we reach here, target was not found in the array
+    // Convention: return -1 to signal "not found"
+    // (using -1 because valid indices are always >= 0)
+    return -1;
+}
+
+int main() {
+    vector<int> arr = {4, 2, 7, 1, 9, 3};
+    cout << linearSearch(arr, 7) << endl;   // 2
+    cout << linearSearch(arr, 5) << endl;   // -1
+
+    return 0;
+}`,
+              expectedOutput: `2
+-1
+0`,
             },
           ],
           hints: [
@@ -373,6 +900,69 @@ export const arraysSection: DSASection = {
     while (j < b.size()) add(b[j++]);
     return res;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Returns a new sorted vector with all unique elements from both arrays
+// Both input arrays are already sorted
+vector<int> unionSorted(vector<int>& a, vector<int>& b) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> a = {1, 2, 4, 5};
+    vector<int> b = {2, 3, 5, 6};
+    vector<int> res = unionSorted(a, b);
+    for (int x : res) cout << x << " ";
+    cout << endl;  // Expected: 1 2 3 4 5 6
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> unionSorted(vector<int>& a, vector<int>& b) {
+
+    // res will hold the final union (sorted, no duplicates)
+    vector<int> res;
+
+    // Two pointers: i scans array a, j scans array b
+    int i = 0, j = 0;
+
+    // Lambda function (anonymous function) to add x to res only if not duplicate
+    // [&] means "capture all local variables by reference" (can use res, i, j inside)
+    // res.empty() = true if res has no elements yet
+    // res.back() = last element of res
+    auto add = [&](int x) {
+        if (res.empty() || res.back() != x)  // only add if not a duplicate
+            res.push_back(x);  // push_back adds x to the END of res
+    };
+
+    // Compare front elements of both arrays
+    // Pick the smaller one, add to result, advance that pointer
+    while (i < a.size() && j < b.size()) {
+        if (a[i] <= b[j]) add(a[i++]);  // a[i] is smaller (or equal): add it, advance i
+        else               add(b[j++]);  // b[j] is smaller: add it, advance j
+    }
+
+    // One array might have leftover elements — drain them
+    while (i < a.size()) add(a[i++]);  // drain remaining elements of a
+    while (j < b.size()) add(b[j++]);  // drain remaining elements of b
+
+    return res;
+}
+
+int main() {
+    vector<int> a = {1, 2, 4, 5};
+    vector<int> b = {2, 3, 5, 6};
+    vector<int> res = unionSorted(a, b);
+    for (int x : res) cout << x << " ";  // 1 2 3 4 5 6
+    cout << endl;
+
+    return 0;
+}`,
+              expectedOutput: `1 2 3 4 5 6 `,
             },
           ],
           hints: [
@@ -416,6 +1006,59 @@ export const arraysSection: DSASection = {
     for (int x : nums) actual += x;
     return expected - actual;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Array has n-1 elements from range [0..n], find the missing one
+// n * (n+1) / 2 = sum of 0+1+2+...+n (Gauss formula)
+int missingNumber(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {3, 0, 1};
+    cout << missingNumber(test1) << endl;  // Expected: 2
+
+    vector<int> test2 = {0, 1};
+    cout << missingNumber(test2) << endl;  // Expected: 2
+
+    vector<int> test3 = {9,6,4,2,3,5,7,0,1};
+    cout << missingNumber(test3) << endl;  // Expected: 8
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int missingNumber(vector<int>& nums) {
+
+    // nums.size() returns how many elements are in the array
+    // If the array has n-1 elements from range [0..n], n = nums.size()
+    int n = nums.size();
+
+    // Gauss formula: sum of 0+1+2+...+n = n*(n+1)/2
+    // This is the sum if NO element was missing
+    int expected = n * (n + 1) / 2;
+
+    // Calculate the actual sum of what we have
+    int actual = 0;
+    for (int x : nums) actual += x;  // add each element to running total
+
+    // The difference = the missing number
+    // If expected = 15 and actual = 12, then 3 is missing
+    return expected - actual;
+}
+
+int main() {
+    vector<int> nums = {3, 0, 1};
+    cout << missingNumber(nums) << endl;  // 2
+
+    return 0;
+}`,
+              expectedOutput: `2
+2
+8`,
             },
             {
               name: 'XOR Trick',
@@ -433,6 +1076,59 @@ export const arraysSection: DSASection = {
     for (int x : nums) xorAll ^= x;
     return xorAll;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// XOR trick: x ^ x = 0, x ^ 0 = x
+// XOR all numbers 0..n with all array elements
+// Pairs cancel out, leaving the missing number
+int missingNumber(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {3, 0, 1};
+    cout << missingNumber(test1) << endl;  // Expected: 2
+
+    vector<int> test2 = {9,6,4,2,3,5,7,0,1};
+    cout << missingNumber(test2) << endl;  // Expected: 8
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int missingNumber(vector<int>& nums) {
+
+    // xorAll will accumulate XOR of everything
+    int xorAll = 0;
+    int n = nums.size();
+
+    // XOR properties you must know:
+    //   a ^ a = 0   (any number XOR itself = 0)
+    //   a ^ 0 = a   (any number XOR 0 = itself)
+    //   XOR is commutative and associative (order doesn't matter)
+
+    // Step 1: XOR all numbers from 0 to n (the "complete" set)
+    // i <= n because the missing number could be n itself
+    for (int i = 0; i <= n; i++) {
+        xorAll ^= i;  // ^= means XOR and assign (xorAll = xorAll ^ i)
+    }
+
+    // Step 2: XOR with all numbers we actually have
+    // Each number present in nums appears once in step 1 and once here
+    // They cancel: 3^3=0, 0^0=0, 1^1=0
+    // Only the missing number (appears only in step 1) survives
+    for (int x : nums) {
+        xorAll ^= x;
+    }
+
+    // xorAll now holds only the missing number
+    return xorAll;
+}`,
+              expectedOutput: `2
+8`,
             },
           ],
           hints: [
@@ -476,6 +1172,63 @@ export const arraysSection: DSASection = {
     }
     return maxCount;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// max(a, b) returns the larger of a and b — built-in function
+// count tracks current streak, maxCount tracks best streak seen
+int findMaxConsecutiveOnes(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {1, 1, 0, 1, 1, 1};
+    cout << findMaxConsecutiveOnes(test1) << endl;  // Expected: 3
+
+    vector<int> test2 = {1, 0, 1, 1, 0, 1};
+    cout << findMaxConsecutiveOnes(test2) << endl;  // Expected: 2
+
+    vector<int> test3 = {0, 0, 0};
+    cout << findMaxConsecutiveOnes(test3) << endl;  // Expected: 0
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int findMaxConsecutiveOnes(vector<int>& nums) {
+
+    int count = 0;     // current streak of 1s (resets on 0)
+    int maxCount = 0;  // best streak seen so far
+
+    // Range-based for loop: x takes each value in nums one by one
+    for (int x : nums) {
+
+        if (x == 1) {
+            // We're in a streak — increment count
+            // ++count is pre-increment: increment THEN use the value
+            // max(maxCount, ++count) = pick larger of current max and new count
+            maxCount = max(maxCount, ++count);
+        } else {
+            // Encountered a 0 — streak breaks, reset count to 0
+            count = 0;
+        }
+    }
+
+    // maxCount holds the length of the longest 1-streak
+    return maxCount;
+}
+
+int main() {
+    vector<int> nums = {1, 1, 0, 1, 1, 1};
+    cout << findMaxConsecutiveOnes(nums) << endl;  // 3
+
+    return 0;
+}`,
+              expectedOutput: `3
+2
+0`,
             },
           ],
           hints: [
@@ -513,6 +1266,68 @@ export const arraysSection: DSASection = {
     for (int x : nums) res ^= x;
     return res;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// ^ is the XOR (exclusive OR) operator
+// Key property: a ^ a = 0, a ^ 0 = a
+// So duplicates cancel each other, leaving only the unique element
+int singleNumber(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {2, 2, 1};
+    cout << singleNumber(test1) << endl;  // Expected: 1
+
+    vector<int> test2 = {4, 1, 2, 1, 2};
+    cout << singleNumber(test2) << endl;  // Expected: 4
+
+    vector<int> test3 = {1};
+    cout << singleNumber(test3) << endl;  // Expected: 1
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int singleNumber(vector<int>& nums) {
+
+    // res accumulates the XOR of all elements
+    // Start with 0 because: res ^ nums[0] = nums[0] (XOR with 0 gives itself)
+    int res = 0;
+
+    for (int x : nums) {
+        // ^ is XOR: "exclusive or"
+        // For bits: 0^0=0, 1^1=0, 0^1=1, 1^0=1
+        // So: same numbers XOR to 0, different XOR to non-zero
+        //
+        // Example with {4, 1, 2, 1, 2}:
+        // res = 0 ^ 4 = 4
+        // res = 4 ^ 1 = 5
+        // res = 5 ^ 2 = 7
+        // res = 7 ^ 1 = 6   (1 appeared again, cancels with earlier 1: 4^5=1, 1^1=0, so effectively)
+        // res = 6 ^ 2 = 4   (2 appeared again, cancels with earlier 2)
+        // Final: 4 — the unique element!
+        res ^= x;  // res = res XOR x
+    }
+
+    return res;  // only the non-paired element remains
+}
+
+int main() {
+    vector<int> test1 = {2, 2, 1};
+    cout << singleNumber(test1) << endl;  // 1
+
+    vector<int> test2 = {4, 1, 2, 1, 2};
+    cout << singleNumber(test2) << endl;  // 4
+
+    return 0;
+}`,
+              expectedOutput: `1
+4
+1`,
             },
           ],
           hints: [
@@ -556,6 +1371,64 @@ export const arraysSection: DSASection = {
     }
     return maxLen;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Sliding window: maintain a [left, right] window with current sum
+// Expand right to grow the window, shrink from left when sum > k
+// Only works when ALL elements are NON-NEGATIVE
+int longestSubarraySumK(vector<int>& arr, int k) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {1, 2, 3, 1, 1, 1, 1};
+    cout << longestSubarraySumK(test1, 3) << endl;  // Expected: 4 (1+1+1+1=4? No, 1+1+1=3 len 3)
+    // Wait: subarray [1,1,1] at end has sum 3, len 3. [1,2] has sum 3, len 2. Answer: 3.
+
+    vector<int> test2 = {1, 0, 1, 1, 0};
+    cout << longestSubarraySumK(test2, 2) << endl;  // Expected: 5 (whole array: 1+0+1+1+0=3... )
+    // [1,0,1] = 2 (len 3), [0,1,1,0] = 2 (len 4). Answer: 4
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int longestSubarraySumK(vector<int>& arr, int k) {
+
+    // Two pointers defining our current window [left, right]
+    int left = 0;
+    int sum = 0;      // sum of elements in current window
+    int maxLen = 0;   // length of longest valid window found so far
+
+    // right expands the window one element at a time
+    for (int right = 0; right < arr.size(); right++) {
+
+        // Add arr[right] to our window's sum
+        sum += arr[right];
+
+        // If sum exceeds k, shrink window from the left
+        // left++ advances left pointer AND moves past that element
+        // We keep shrinking until sum <= k (or window becomes empty)
+        while (sum > k) {
+            sum -= arr[left];  // remove left element from sum
+            left++;            // shrink window from left
+        }
+
+        // Now sum <= k. If sum == k, this window is a candidate.
+        if (sum == k) {
+            // right - left + 1 = length of current window
+            // +1 because both endpoints are inclusive (e.g., [2,4] has length 3)
+            maxLen = max(maxLen, right - left + 1);
+        }
+    }
+
+    return maxLen;
+}`,
+              expectedOutput: `3
+4`,
             },
           ],
           hints: [
@@ -607,6 +1480,68 @@ export const arraysSection: DSASection = {
     }
     return maxLen;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// unordered_map<int,int> mp — a hash map storing (prefixSum → earliest index)
+// mp.count(key) returns 1 if key exists in map, 0 if not
+// Use prefix sums: sum(i..j) = prefixSum[j] - prefixSum[i-1]
+int longestSubarrayK(vector<int>& arr, int k) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {-1, 1, 1};
+    cout << longestSubarrayK(test1, 1) << endl;  // Expected: 3
+
+    vector<int> test2 = {10, 5, 2, 7, 1, 9};
+    cout << longestSubarrayK(test2, 15) << endl;  // Expected: 4
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int longestSubarrayK(vector<int>& arr, int k) {
+
+    // unordered_map = hash map (O(1) average lookup/insert)
+    // Key: prefix sum value, Value: the EARLIEST index where this prefix sum occurred
+    // We store earliest index because we want the LONGEST subarray
+    unordered_map<int, int> mp;
+
+    // Prefix sum at index -1 is 0 (no elements yet)
+    // This handles subarrays starting from index 0
+    // e.g., if prefixSum at index 3 is k, then subarray [0..3] has sum k
+    //        prefixSum - k = 0, which we stored at index -1, so length = 3 - (-1) = 4
+    mp[0] = -1;
+
+    int prefixSum = 0;  // running prefix sum
+    int maxLen = 0;
+
+    for (int i = 0; i < arr.size(); i++) {
+
+        prefixSum += arr[i];  // add current element to prefix sum
+
+        // If prefixSum - k exists in map at index j:
+        // then subarray from (j+1) to i has sum = prefixSum - (prefixSum - k) = k
+        // Length of that subarray = i - j
+        if (mp.count(prefixSum - k)) {
+            maxLen = max(maxLen, i - mp[prefixSum - k]);
+        }
+
+        // Store this prefix sum if NOT already in map
+        // We only store the FIRST occurrence to maximize subarray length
+        // (if we update with later indices, we'd get shorter subarrays)
+        if (!mp.count(prefixSum)) {
+            mp[prefixSum] = i;
+        }
+    }
+
+    return maxLen;
+}`,
+              expectedOutput: `3
+4`,
             },
           ],
           hints: [
@@ -661,6 +1596,67 @@ export const arraysSection: DSASection = {
     }
     return {};
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Returns a vector of TWO indices {i, j} such that nums[i] + nums[j] == target
+// vector<int> as return type = we're returning a list of integers
+vector<int> twoSum(vector<int>& nums, int target) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {2, 7, 11, 15};
+    vector<int> r1 = twoSum(test1, 9);
+    cout << r1[0] << " " << r1[1] << endl;  // Expected: 0 1
+
+    vector<int> test2 = {3, 2, 4};
+    vector<int> r2 = twoSum(test2, 6);
+    cout << r2[0] << " " << r2[1] << endl;  // Expected: 1 2
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+// Returns pair of indices as a vector {i, j}
+vector<int> twoSum(vector<int>& nums, int target) {
+
+    // unordered_map<int, int> maps each VALUE to its INDEX
+    // e.g., if nums[3] = 7, store mp[7] = 3
+    unordered_map<int, int> mp;  // value → index
+
+    for (int i = 0; i < nums.size(); i++) {
+
+        // We need: nums[i] + nums[j] = target
+        // So: nums[j] = target - nums[i]  ← this is the "complement"
+        int comp = target - nums[i];
+
+        // mp.count(comp) = 1 if comp exists in map, 0 if not
+        // If complement already in map → we found the pair!
+        if (mp.count(comp)) {
+            // Return indices as a vector literal {mp[comp], i}
+            // mp[comp] = index of the complement, i = current index
+            return {mp[comp], i};
+        }
+
+        // Complement not found yet — store current element for future lookups
+        mp[nums[i]] = i;  // remember: value nums[i] is at index i
+    }
+
+    return {};  // empty vector = no solution (problem guarantees one exists)
+}
+
+int main() {
+    vector<int> nums = {2, 7, 11, 15};
+    vector<int> res = twoSum(nums, 9);
+    cout << res[0] << " " << res[1] << endl;  // 0 1
+
+    return 0;
+}`,
+              expectedOutput: `0 1
+1 2`,
             },
           ],
           hints: [
@@ -707,6 +1703,81 @@ export const arraysSection: DSASection = {
         else swap(nums[mid], nums[high--]);
     }
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Three pointer approach:
+// low  = boundary of 0-region (everything before low is 0)
+// mid  = current element being processed
+// high = boundary of 2-region (everything after high is 2)
+void sortColors(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {2, 0, 2, 1, 1, 0};
+    sortColors(test1);
+    for (int x : test1) cout << x << " ";
+    cout << endl;  // Expected: 0 0 1 1 2 2
+
+    vector<int> test2 = {2, 0, 1};
+    sortColors(test2);
+    for (int x : test2) cout << x << " ";
+    cout << endl;  // Expected: 0 1 2
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+void sortColors(vector<int>& nums) {
+
+    // Three pointers divide the array into regions:
+    // [0 .. low-1]  → all 0s (confirmed)
+    // [low .. mid-1] → all 1s (confirmed)
+    // [mid .. high]  → unknown (to be processed)
+    // [high+1 .. n-1] → all 2s (confirmed)
+    int low = 0;
+    int mid = 0;
+    int high = nums.size() - 1;
+
+    // Process until mid crosses high (unknown region is empty)
+    while (mid <= high) {
+
+        if (nums[mid] == 0) {
+            // Current element is 0 → belongs in 0-region
+            // Swap with low boundary, then advance BOTH low and mid
+            // (we know nums[low] was a 1 because it was in the 1-region,
+            //  so after swap, nums[mid] = 1, which is already processed)
+            swap(nums[low++], nums[mid++]);
+        }
+        else if (nums[mid] == 1) {
+            // Current element is 1 → already in the right region
+            // Just advance mid
+            mid++;
+        }
+        else {
+            // nums[mid] == 2 → belongs in 2-region
+            // Swap with high boundary, then shrink high
+            // IMPORTANT: do NOT advance mid here!
+            // The element swapped from high is UNKNOWN (could be 0, 1, or 2)
+            // mid needs to re-examine it in the next iteration
+            swap(nums[mid], nums[high--]);
+        }
+    }
+}
+
+int main() {
+    vector<int> nums = {2, 0, 2, 1, 1, 0};
+    sortColors(nums);
+    for (int x : nums) cout << x << " ";  // 0 0 1 1 2 2
+    cout << endl;
+
+    return 0;
+}`,
+              expectedOutput: `0 0 1 1 2 2
+0 1 2 `,
             },
           ],
           hints: [
@@ -754,6 +1825,75 @@ export const arraysSection: DSASection = {
     }
     return candidate;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Boyer-Moore Voting: think of it as voting
+// Candidate gains a vote when it's seen, loses a vote when something else is seen
+// Majority element always survives because it has more votes than everything else combined
+int majorityElement(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {3, 2, 3};
+    cout << majorityElement(test1) << endl;  // Expected: 3
+
+    vector<int> test2 = {2, 2, 1, 1, 1, 2, 2};
+    cout << majorityElement(test2) << endl;  // Expected: 2
+
+    vector<int> test3 = {1};
+    cout << majorityElement(test3) << endl;  // Expected: 1
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int majorityElement(vector<int>& nums) {
+
+    // Start with first element as our initial candidate
+    int candidate = nums[0];
+    int count = 1;  // how many net "votes" our candidate has
+
+    // Start from index 1 (we already used nums[0] as initial candidate)
+    for (int i = 1; i < nums.size(); i++) {
+
+        if (count == 0) {
+            // Our candidate was completely cancelled out
+            // Start fresh with the current element as the new candidate
+            candidate = nums[i];
+            count = 1;
+        }
+        else if (nums[i] == candidate) {
+            // Same as current candidate → it gains a vote
+            count++;
+        }
+        else {
+            // Different from candidate → they cancel each other (both lose 1 vote)
+            count--;
+        }
+    }
+
+    // The surviving candidate is the majority element
+    // WHY? Majority appears > n/2 times, so it can never be fully cancelled
+    // Even if every other element votes against it, majority still wins
+    return candidate;
+}
+
+int main() {
+    vector<int> nums = {3, 2, 3};
+    cout << majorityElement(nums) << endl;  // 3
+
+    vector<int> nums2 = {2, 2, 1, 1, 1, 2, 2};
+    cout << majorityElement(nums2) << endl;  // 2
+
+    return 0;
+}`,
+              expectedOutput: `3
+2
+1`,
             },
           ],
           hints: [
@@ -799,6 +1939,67 @@ export const arraysSection: DSASection = {
     }
     return best;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Kadane's: at each position, decide — extend current subarray or start fresh?
+// If cur + nums[i] < nums[i], current subarray is a burden → start fresh
+int maxSubArray(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+    cout << maxSubArray(test1) << endl;  // Expected: 6 ([4,-1,2,1])
+
+    vector<int> test2 = {1};
+    cout << maxSubArray(test2) << endl;  // Expected: 1
+
+    vector<int> test3 = {-3, -2, -1};
+    cout << maxSubArray(test3) << endl;  // Expected: -1
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int maxSubArray(vector<int>& nums) {
+
+    // cur = max subarray sum ENDING at the current position
+    // best = global maximum subarray sum seen so far
+    // Both start at nums[0] to handle all-negative arrays correctly
+    int cur = nums[0];
+    int best = nums[0];
+
+    // Start from index 1 (nums[0] is already our initial subarray)
+    for (int i = 1; i < nums.size(); i++) {
+
+        // KEY DECISION: should we extend the existing subarray or start fresh?
+        // Option A: extend → cur + nums[i]
+        // Option B: start fresh → nums[i]  (abandon the previous subarray)
+        //
+        // If cur is negative, adding it to nums[i] makes things worse
+        // So when cur < 0, starting fresh (just nums[i]) is always better
+        // max() automatically makes this choice
+        cur = max(nums[i], cur + nums[i]);
+
+        // Update global best
+        best = max(best, cur);
+    }
+
+    return best;
+}
+
+int main() {
+    vector<int> nums = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+    cout << maxSubArray(nums) << endl;  // 6
+
+    return 0;
+}`,
+              expectedOutput: `6
+1
+-1`,
             },
           ],
           hints: [
@@ -891,6 +2092,67 @@ export const arraysSection: DSASection = {
     }
     return maxProfit;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// INT_MAX = largest possible int = 2,147,483,647
+// We use it so that the first price always becomes minPrice
+int maxProfit(vector<int>& prices) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {7, 1, 5, 3, 6, 4};
+    cout << maxProfit(test1) << endl;  // Expected: 5 (buy at 1, sell at 6)
+
+    vector<int> test2 = {7, 6, 4, 3, 1};
+    cout << maxProfit(test2) << endl;  // Expected: 0 (prices only fall, no profit)
+
+    vector<int> test3 = {2, 4, 1};
+    cout << maxProfit(test3) << endl;  // Expected: 2 (buy at 2, sell at 4)
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int maxProfit(vector<int>& prices) {
+
+    // Track the minimum price seen so far (the cheapest "buy" opportunity)
+    // INT_MAX = 2,147,483,647: ensures the very first price becomes minPrice
+    int minPrice = INT_MAX;
+
+    // Track the best profit we could have made
+    // 0 means "don't trade at all" — we can always choose not to buy
+    int maxProfit = 0;
+
+    // Scan prices left to right (day by day)
+    for (int p : prices) {
+
+        // Update minimum price seen so far
+        // min(a, b) returns the smaller of a and b
+        minPrice = min(minPrice, p);
+
+        // What profit could we make selling TODAY?
+        // p - minPrice = today's price minus cheapest buy price (before today)
+        // This is always valid because minPrice was recorded BEFORE current day
+        maxProfit = max(maxProfit, p - minPrice);
+    }
+
+    // maxProfit is 0 if prices only decreased (no profitable trade exists)
+    return maxProfit;
+}
+
+int main() {
+    vector<int> prices = {7, 1, 5, 3, 6, 4};
+    cout << maxProfit(prices) << endl;  // 5
+
+    return 0;
+}`,
+              expectedOutput: `5
+0
+2`,
             },
           ],
           hints: [
@@ -936,6 +2198,64 @@ export const arraysSection: DSASection = {
     }
     return res;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Place positives at even indices (0,2,4,...) and negatives at odd indices (1,3,5,...)
+// Array is guaranteed to have equal counts of positives and negatives
+vector<int> rearrangeArray(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {3, 1, -2, -5, 2, -4};
+    vector<int> r1 = rearrangeArray(test1);
+    for (int x : r1) cout << x << " ";
+    cout << endl;  // Expected: 3 -2 1 -5 2 -4 (pos, neg alternating)
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> rearrangeArray(vector<int>& nums) {
+
+    int n = nums.size();
+
+    // Create a result array of same size, initially all zeros
+    // vector<int> res(n) creates a vector of n zeros
+    vector<int> res(n);
+
+    // pos = next available even index (for positives): 0, 2, 4, ...
+    // neg = next available odd  index (for negatives): 1, 3, 5, ...
+    int pos = 0;
+    int neg = 1;
+
+    // Scan through each element and place it at the right position
+    for (int x : nums) {
+
+        if (x > 0) {
+            res[pos] = x;  // place positive at current even index
+            pos += 2;      // advance to next even index (skip odd)
+        } else {
+            res[neg] = x;  // place negative at current odd index
+            neg += 2;      // advance to next odd index (skip even)
+        }
+    }
+
+    return res;  // res now alternates: positive, negative, positive, negative, ...
+}
+
+int main() {
+    vector<int> nums = {3, 1, -2, -5, 2, -4};
+    vector<int> res = rearrangeArray(nums);
+    for (int x : res) cout << x << " ";
+    cout << endl;
+
+    return 0;
+}`,
+              expectedOutput: `3 -2 1 -5 2 -4 `,
             },
           ],
           hints: [
@@ -979,6 +2299,82 @@ export const arraysSection: DSASection = {
     }
     reverse(nums.begin() + i + 1, nums.end());
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Next permutation: rearrange nums to the lexicographically next greater permutation
+// If no greater permutation exists (already largest), rearrange to smallest (sorted)
+void nextPermutation(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {1, 2, 3};
+    nextPermutation(test1);
+    for (int x : test1) cout << x << " ";
+    cout << endl;  // Expected: 1 3 2
+
+    vector<int> test2 = {3, 2, 1};  // already largest
+    nextPermutation(test2);
+    for (int x : test2) cout << x << " ";
+    cout << endl;  // Expected: 1 2 3 (wraps to smallest)
+
+    vector<int> test3 = {1, 1, 5};
+    nextPermutation(test3);
+    for (int x : test3) cout << x << " ";
+    cout << endl;  // Expected: 1 5 1
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+void nextPermutation(vector<int>& nums) {
+
+    int n = nums.size();
+
+    // STEP 1: Find the "pivot" — the rightmost position where nums[i] < nums[i+1]
+    // This is the first position from the right that breaks descending order
+    // Everything to the right of i is in DESCENDING order (already the largest arrangement)
+    int i = n - 2;
+    while (i >= 0 && nums[i] >= nums[i + 1]) {
+        i--;  // scan left until we find a "dip"
+    }
+
+    // i == -1 means the array is already in descending order → it's the LAST permutation
+    // Skip step 2 and just reverse everything to get the first (smallest) permutation
+    if (i >= 0) {
+
+        // STEP 2: Find the smallest element to the right of i that is still > nums[i]
+        // Since the suffix is sorted in descending order, we scan from the right
+        int j = n - 1;
+        while (nums[j] <= nums[i]) {
+            j--;  // find first element from right that is strictly greater than nums[i]
+        }
+
+        // Swap nums[i] with nums[j] to make the number just slightly larger
+        swap(nums[i], nums[j]);
+    }
+
+    // STEP 3: Reverse the suffix starting at i+1
+    // After the swap, suffix is still in descending order
+    // Reversing it gives the SMALLEST possible suffix arrangement
+    // This ensures we get the NEXT permutation (not a larger jump)
+    reverse(nums.begin() + i + 1, nums.end());
+}
+
+int main() {
+    vector<int> nums = {1, 2, 3};
+    nextPermutation(nums);
+    for (int x : nums) cout << x << " ";  // 1 3 2
+    cout << endl;
+
+    return 0;
+}`,
+              expectedOutput: `1 3 2
+1 2 3
+1 5 1 `,
             },
           ],
           hints: [
@@ -1027,6 +2423,70 @@ export const arraysSection: DSASection = {
     reverse(res.begin(), res.end());
     return res;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// A leader is an element greater than ALL elements to its right
+// The rightmost element is always a leader (nothing to its right)
+vector<int> leaders(vector<int>& arr) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {16, 17, 4, 3, 5, 2};
+    vector<int> r1 = leaders(test1);
+    for (int x : r1) cout << x << " ";
+    cout << endl;  // Expected: 17 5 2
+
+    vector<int> test2 = {1, 2, 3, 4, 5};
+    vector<int> r2 = leaders(test2);
+    for (int x : r2) cout << x << " ";
+    cout << endl;  // Expected: 5
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> leaders(vector<int>& arr) {
+
+    int n = arr.size();
+    vector<int> res;  // will hold leaders (added right-to-left initially)
+
+    // Rightmost element is ALWAYS a leader — nothing to its right
+    int maxRight = arr[n - 1];
+    res.push_back(maxRight);
+
+    // Scan from second-to-last going LEFT
+    for (int i = n - 2; i >= 0; i--) {
+
+        // arr[i] is a leader if it is >= maxRight
+        // maxRight = maximum element seen so far from the right
+        if (arr[i] >= maxRight) {
+            maxRight = arr[i];      // arr[i] is now the new rightmost maximum
+            res.push_back(arr[i]);  // it's a leader, add to result
+        }
+        // if arr[i] < maxRight → NOT a leader, skip
+    }
+
+    // We added leaders from right-to-left, so reverse to restore left-to-right order
+    // reverse() modifies the vector in-place between .begin() and .end()
+    reverse(res.begin(), res.end());
+
+    return res;
+}
+
+int main() {
+    vector<int> arr = {16, 17, 4, 3, 5, 2};
+    vector<int> res = leaders(arr);
+    for (int x : res) cout << x << " ";  // 17 5 2
+    cout << endl;
+
+    return 0;
+}`,
+              expectedOutput: `17 5 2
+5 `,
             },
           ],
           hints: [
@@ -1075,6 +2535,72 @@ export const arraysSection: DSASection = {
     }
     return maxLen;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// unordered_set<int> = hash set (O(1) lookup, no duplicates, no order)
+// st.count(x) returns 1 if x is in set, 0 if not
+int longestConsecutive(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {100, 4, 200, 1, 3, 2};
+    cout << longestConsecutive(test1) << endl;  // Expected: 4 (1,2,3,4)
+
+    vector<int> test2 = {0, 3, 7, 2, 5, 8, 4, 6, 0, 1};
+    cout << longestConsecutive(test2) << endl;  // Expected: 9 (0..8)
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int longestConsecutive(vector<int>& nums) {
+
+    // Insert ALL elements into a hash set for O(1) lookup
+    // unordered_set automatically removes duplicates
+    // Initializer: st(nums.begin(), nums.end()) copies the entire vector into the set
+    unordered_set<int> st(nums.begin(), nums.end());
+
+    int maxLen = 0;
+
+    // For each number in the set, check if it could be the START of a sequence
+    for (int x : st) {
+
+        // A number x is a sequence start ONLY if (x-1) is NOT in the set
+        // If x-1 exists, then x is in the MIDDLE of a sequence, not the start
+        // We skip it to avoid redundant counting
+        // !st.count(x-1) = "x-1 is NOT in the set"
+        if (!st.count(x - 1)) {
+
+            // x is a sequence start! Now extend rightward as far as possible
+            int cur = x;   // current number in sequence
+            int len = 1;   // length of current sequence (starting with x itself)
+
+            // Keep extending: check if cur+1 exists in set
+            while (st.count(cur + 1)) {
+                cur++;   // move to next number
+                len++;   // sequence gets longer
+            }
+
+            // Update maximum length
+            maxLen = max(maxLen, len);
+        }
+    }
+
+    return maxLen;
+}
+
+int main() {
+    vector<int> nums = {100, 4, 200, 1, 3, 2};
+    cout << longestConsecutive(nums) << endl;  // 4
+
+    return 0;
+}`,
+              expectedOutput: `4
+9`,
             },
           ],
           hints: [
@@ -1122,6 +2648,90 @@ export const arraysSection: DSASection = {
     if (row0) for (int j = 0; j < n; j++) matrix[0][j] = 0;
     if (col0) for (int i = 0; i < m; i++) matrix[i][0] = 0;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// vector<vector<int>>& = 2D matrix passed by reference (no copy, any changes affect original)
+// Goal: if any cell is 0, set its entire row and column to 0 — in-place, O(1) extra space
+void setZeroes(vector<vector<int>>& matrix) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<vector<int>> mat = {{1,1,1},{1,0,1},{1,1,1}};
+    setZeroes(mat);
+    for (auto& row : mat) {
+        for (int x : row) cout << x << " ";
+        cout << endl;
+    }
+    // Expected:
+    // 1 0 1
+    // 0 0 0
+    // 1 0 1
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+void setZeroes(vector<vector<int>>& matrix) {
+
+    int m = matrix.size();     // number of rows
+    int n = matrix[0].size();  // number of columns
+
+    // Flags to remember whether the FIRST ROW or FIRST COLUMN itself contains a 0
+    // We need separate flags because we'll reuse them as markers
+    bool row0 = false, col0 = false;
+
+    // Check if first row has any 0
+    for (int j = 0; j < n; j++) if (matrix[0][j] == 0) row0 = true;
+
+    // Check if first column has any 0
+    for (int i = 0; i < m; i++) if (matrix[i][0] == 0) col0 = true;
+
+    // PASS 1: Use first row and first column as markers
+    // For every 0 at (i,j) with i>0,j>0:
+    //   mark matrix[i][0] = 0  (this row needs to be zeroed)
+    //   mark matrix[0][j] = 0  (this column needs to be zeroed)
+    for (int i = 1; i < m; i++) {
+        for (int j = 1; j < n; j++) {
+            if (matrix[i][j] == 0) {
+                matrix[i][0] = 0;  // row marker
+                matrix[0][j] = 0;  // col marker
+            }
+        }
+    }
+
+    // PASS 2: Actually zero out cells (excluding first row and col)
+    // If row marker is 0 OR col marker is 0 → zero this cell
+    for (int i = 1; i < m; i++) {
+        for (int j = 1; j < n; j++) {
+            if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                matrix[i][j] = 0;
+            }
+        }
+    }
+
+    // Handle first row: if it originally had a 0, zero the entire first row
+    if (row0) for (int j = 0; j < n; j++) matrix[0][j] = 0;
+
+    // Handle first col: if it originally had a 0, zero the entire first column
+    if (col0) for (int i = 0; i < m; i++) matrix[i][0] = 0;
+}
+
+int main() {
+    vector<vector<int>> mat = {{1,1,1},{1,0,1},{1,1,1}};
+    setZeroes(mat);
+    for (auto& row : mat) {
+        for (int x : row) cout << x << " ";
+        cout << endl;
+    }
+    return 0;
+}`,
+              expectedOutput: `1 0 1
+0 0 0
+1 0 1 `,
             },
           ],
           hints: [
@@ -1167,6 +2777,68 @@ export const arraysSection: DSASection = {
     for (auto& row : matrix)
         reverse(row.begin(), row.end());
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Rotate matrix 90 degrees clockwise in-place
+// Trick: transpose (swap across diagonal) then reverse each row
+void rotate(vector<vector<int>>& matrix) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<vector<int>> mat = {{1,2,3},{4,5,6},{7,8,9}};
+    rotate(mat);
+    for (auto& row : mat) {
+        for (int x : row) cout << x << " ";
+        cout << endl;
+    }
+    // Expected:
+    // 7 4 1
+    // 8 5 2
+    // 9 6 3
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+void rotate(vector<vector<int>>& matrix) {
+
+    int n = matrix.size();  // matrix is n×n (square)
+
+    // STEP 1: Transpose — swap matrix[i][j] with matrix[j][i]
+    // Only iterate over the UPPER TRIANGLE (j starts from i+1)
+    // If we used j from 0..n, each pair would be swapped TWICE (back to original)
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            swap(matrix[i][j], matrix[j][i]);
+            // swap() exchanges two values. Built-in from <algorithm>
+        }
+    }
+
+    // STEP 2: Reverse each row
+    // After transpose, reversing each row gives 90-degree clockwise rotation
+    // auto& row means: row is a REFERENCE to each row vector (no copy made)
+    for (auto& row : matrix) {
+        reverse(row.begin(), row.end());
+        // reverse() reverses elements between two iterators (pointers to start and end)
+    }
+}
+
+int main() {
+    vector<vector<int>> mat = {{1,2,3},{4,5,6},{7,8,9}};
+    rotate(mat);
+    for (auto& row : mat) {
+        for (int x : row) cout << x << " ";
+        cout << endl;
+    }
+    return 0;
+}`,
+              expectedOutput: `7 4 1
+8 5 2
+9 6 3 `,
             },
           ],
           hints: [
@@ -1213,6 +2885,71 @@ export const arraysSection: DSASection = {
     }
     return res;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Traverse matrix in spiral order: right → down → left → up → repeat
+// Use 4 boundary variables: top, bottom, left, right
+vector<int> spiralOrder(vector<vector<int>>& matrix) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<vector<int>> mat = {{1,2,3},{4,5,6},{7,8,9}};
+    vector<int> res = spiralOrder(mat);
+    for (int x : res) cout << x << " ";
+    cout << endl;  // Expected: 1 2 3 6 9 8 7 4 5
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> spiralOrder(vector<vector<int>>& matrix) {
+
+    vector<int> res;
+
+    // 4 boundary pointers that shrink inward after each pass
+    int top = 0;
+    int bottom = matrix.size() - 1;     // last row index
+    int left = 0;
+    int right = matrix[0].size() - 1;   // last column index
+
+    while (top <= bottom && left <= right) {
+
+        // Move RIGHT across the top row
+        for (int j = left; j <= right; j++) res.push_back(matrix[top][j]);
+        top++;  // top row is done, shrink boundary inward
+
+        // Move DOWN along the right column
+        for (int i = top; i <= bottom; i++) res.push_back(matrix[i][right]);
+        right--;  // right column is done, shrink boundary inward
+
+        // Move LEFT across the bottom row (only if there's still a bottom row)
+        if (top <= bottom) {
+            for (int j = right; j >= left; j--) res.push_back(matrix[bottom][j]);
+            bottom--;  // bottom row is done, shrink boundary inward
+        }
+
+        // Move UP along the left column (only if there's still a left column)
+        if (left <= right) {
+            for (int i = bottom; i >= top; i--) res.push_back(matrix[i][left]);
+            left++;  // left column is done, shrink boundary inward
+        }
+    }
+
+    return res;
+}
+
+int main() {
+    vector<vector<int>> mat = {{1,2,3},{4,5,6},{7,8,9}};
+    vector<int> res = spiralOrder(mat);
+    for (int x : res) cout << x << " ";  // 1 2 3 6 9 8 7 4 5
+    cout << endl;
+    return 0;
+}`,
+              expectedOutput: `1 2 3 6 9 8 7 4 5 `,
             },
           ],
           hints: [
@@ -1265,6 +3002,68 @@ export const arraysSection: DSASection = {
     }
     return count;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// mp[prefixSum] = how many times this prefix sum has occurred
+// If prefixSum - k was seen before, those previous positions form subarrays with sum k
+int subarraySum(vector<int>& nums, int k) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {1, 1, 1};
+    cout << subarraySum(test1, 2) << endl;  // Expected: 2 ([1,1] at start, [1,1] at end)
+
+    vector<int> test2 = {1, 2, 3};
+    cout << subarraySum(test2, 3) << endl;  // Expected: 2 ([3] and [1,2])
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int subarraySum(vector<int>& nums, int k) {
+
+    // mp stores: prefix_sum → how many times this prefix sum has appeared
+    unordered_map<int, int> mp;
+
+    // Initialize: prefix sum of 0 has appeared 1 time (before the array starts)
+    // This handles subarrays starting from index 0
+    // e.g., if ps[3] = k, then subarray [0..3] has sum k
+    //        ps[3] - k = 0, which appeared 1 time → count += 1 ✓
+    mp[0] = 1;
+
+    int ps = 0;      // running prefix sum
+    int count = 0;   // number of subarrays with sum exactly k
+
+    for (int x : nums) {
+
+        ps += x;  // extend prefix sum by current element
+
+        // KEY INSIGHT: if (ps - k) was seen before at index j,
+        // then subarray (j+1..current) has sum = ps - (ps-k) = k
+        // mp[ps - k] = how many such subarrays end here
+        // mp[ps - k] returns 0 if key doesn't exist (default for int in map)
+        count += mp[ps - k];
+
+        // Record current prefix sum (increment its count)
+        // We add AFTER checking to avoid using the current index as both endpoints
+        mp[ps]++;
+    }
+
+    return count;
+}
+
+int main() {
+    vector<int> nums = {1, 1, 1};
+    cout << subarraySum(nums, 2) << endl;  // 2
+
+    return 0;
+}`,
+              expectedOutput: `2
+2`,
             },
           ],
           hints: [
@@ -1316,6 +3115,79 @@ export const arraysSection: DSASection = {
     }
     return res;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Pascal's Triangle: each element = sum of the two elements above it
+// Every row starts and ends with 1
+// vector<vector<int>> = a 2D array (vector of vectors)
+vector<vector<int>> generate(int numRows) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<vector<int>> res = generate(5);
+    for (auto& row : res) {
+        for (int x : row) cout << x << " ";
+        cout << endl;
+    }
+    // Expected:
+    // 1
+    // 1 1
+    // 1 2 1
+    // 1 3 3 1
+    // 1 4 6 4 1
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> generate(int numRows) {
+
+    // Start with the first row: just [1]
+    // {{1}} is an initializer list creating a 2D vector with one row [1]
+    vector<vector<int>> res = {{1}};
+
+    // Build each row from row 1 onwards (row 0 is already in res)
+    for (int i = 1; i < numRows; i++) {
+
+        // Every row starts with 1
+        vector<int> row = {1};
+
+        // Fill interior elements (positions 1 to i-1)
+        // Interior element j = prev_row[j-1] + prev_row[j]
+        for (int j = 1; j < i; j++) {
+            // res[i-1] = previous row
+            // res[i-1][j-1] = element to the upper-left
+            // res[i-1][j]   = element to the upper-right
+            row.push_back(res[i-1][j-1] + res[i-1][j]);
+        }
+
+        // Every row ends with 1
+        row.push_back(1);
+
+        // Append this row to result
+        res.push_back(row);
+    }
+
+    return res;
+}
+
+int main() {
+    auto res = generate(5);
+    for (auto& row : res) {
+        for (int x : row) cout << x << " ";
+        cout << endl;
+    }
+    return 0;
+}`,
+              expectedOutput: `1
+1 1
+1 2 1
+1 3 3 1
+1 4 6 4 1 `,
             },
           ],
           hints: [
@@ -1370,6 +3242,76 @@ export const arraysSection: DSASection = {
     if (c2 > n/3) res.push_back(cand2);
     return res;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Find ALL elements appearing more than n/3 times
+// At most 2 such elements can exist (since 3 * (n/3+1) > n)
+// INT_MIN = -2147483648 = smallest possible int, used as "no candidate yet"
+vector<int> majorityElement(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {3, 2, 3};
+    vector<int> r1 = majorityElement(test1);
+    for (int x : r1) cout << x << " ";
+    cout << endl;  // Expected: 3
+
+    vector<int> test2 = {1, 1, 1, 3, 3, 2, 2, 2};
+    vector<int> r2 = majorityElement(test2);
+    for (int x : r2) cout << x << " ";
+    cout << endl;  // Expected: 1 2 (both appear >2 times in array of size 8)
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> majorityElement(vector<int>& nums) {
+
+    // Two candidate tracking — extended Boyer-Moore Voting
+    // INT_MIN used as sentinel "no candidate set yet" (smallest int value)
+    int c1 = 0, c2 = 0;
+    int cand1 = INT_MIN, cand2 = INT_MIN;
+
+    // PASS 1: Find the two potential majority candidates
+    for (int x : nums) {
+        if (x == cand1)       c1++;          // x matches candidate 1 → boost its count
+        else if (x == cand2)  c2++;          // x matches candidate 2 → boost its count
+        else if (c1 == 0) { cand1 = x; c1 = 1; }   // slot 1 is empty → assign x
+        else if (c2 == 0) { cand2 = x; c2 = 1; }   // slot 2 is empty → assign x
+        else { c1--; c2--; }  // x is a different element → cancel one count from each
+    }
+
+    // PASS 2: Verify — the first pass only FINDS candidates, not confirms them
+    // Re-count how many times each candidate actually appears
+    c1 = c2 = 0;
+    for (int x : nums) {
+        if (x == cand1) c1++;
+        else if (x == cand2) c2++;
+    }
+
+    vector<int> res;
+    int n = nums.size();
+
+    // Only include if count is strictly greater than n/3
+    if (c1 > n / 3) res.push_back(cand1);
+    if (c2 > n / 3) res.push_back(cand2);
+
+    return res;
+}
+
+int main() {
+    vector<int> nums = {1, 1, 1, 3, 3, 2, 2, 2};
+    auto res = majorityElement(nums);
+    for (int x : res) cout << x << " ";  // 1 2
+    cout << endl;
+    return 0;
+}`,
+              expectedOutput: `3
+1 2 `,
             },
           ],
           hints: [
@@ -1427,6 +3369,93 @@ export const arraysSection: DSASection = {
     }
     return res;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Find all unique triplets [a, b, c] where a + b + c = 0
+// sort() first, then fix one element and use two pointers for the rest
+// vector<vector<int>> = 2D array (list of triplets)
+vector<vector<int>> threeSum(vector<int>& nums) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {-1, 0, 1, 2, -1, -4};
+    vector<vector<int>> r1 = threeSum(test1);
+    for (auto& t : r1) cout << t[0] << " " << t[1] << " " << t[2] << endl;
+    // Expected: -1 -1 2 and -1 0 1
+
+    cout << "---" << endl;
+    vector<int> test2 = {0, 0, 0};
+    vector<vector<int>> r2 = threeSum(test2);
+    for (auto& t : r2) cout << t[0] << " " << t[1] << " " << t[2] << endl;
+    // Expected: 0 0 0
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> threeSum(vector<int>& nums) {
+
+    // Sort so duplicates are adjacent and two-pointer works correctly
+    sort(nums.begin(), nums.end());
+
+    vector<vector<int>> res;  // result: list of triplets
+    int n = nums.size();
+
+    // Fix the first element of the triplet
+    for (int i = 0; i < n - 2; i++) {
+
+        // Skip duplicate values for i (avoid duplicate triplets)
+        // Only skip when i > 0 (first occurrence is always considered)
+        if (i > 0 && nums[i] == nums[i - 1]) continue;
+
+        // Two-pointer search for the other two elements
+        int lo = i + 1;   // left pointer: just after i
+        int hi = n - 1;   // right pointer: end of array
+
+        while (lo < hi) {
+            int s = nums[i] + nums[lo] + nums[hi];  // sum of 3 elements
+
+            if (s == 0) {
+                // Found a valid triplet — add it to result
+                // {a, b, c} creates a vector<int> inline
+                res.push_back({nums[i], nums[lo], nums[hi]});
+
+                // Skip duplicates for lo (skip consecutive equal values)
+                while (lo < hi && nums[lo] == nums[lo + 1]) lo++;
+
+                // Skip duplicates for hi (skip consecutive equal values)
+                while (lo < hi && nums[hi] == nums[hi - 1]) hi--;
+
+                // Move both pointers inward to find next triplet
+                lo++;
+                hi--;
+
+            } else if (s < 0) {
+                lo++;  // sum too small → move left pointer right to increase sum
+
+            } else {
+                hi--;  // sum too big → move right pointer left to decrease sum
+            }
+        }
+    }
+
+    return res;
+}
+
+int main() {
+    vector<int> nums = {-1, 0, 1, 2, -1, -4};
+    auto res = threeSum(nums);
+    for (auto& t : res) cout << t[0] << " " << t[1] << " " << t[2] << endl;
+    return 0;
+}`,
+              expectedOutput: `-1 -1 2
+-1 0 1
+---
+0 0 0`,
             },
           ],
           hints: [
@@ -1487,6 +3516,85 @@ export const arraysSection: DSASection = {
     }
     return res;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Find all unique quadruplets [a,b,c,d] where a+b+c+d == target
+// long long = 64-bit integer (larger range than int, avoids overflow for large values)
+vector<vector<int>> fourSum(vector<int>& nums, int target) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {1, 0, -1, 0, -2, 2};
+    vector<vector<int>> r1 = fourSum(test1, 0);
+    for (auto& q : r1) cout << q[0]<<" "<<q[1]<<" "<<q[2]<<" "<<q[3] << endl;
+    // Expected: -2 -1 1 2 and -2 0 0 2 and -1 0 0 1
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> fourSum(vector<int>& nums, int target) {
+
+    // Sort so duplicates are adjacent, enabling skip and two-pointer
+    sort(nums.begin(), nums.end());
+
+    vector<vector<int>> res;
+    int n = nums.size();
+
+    // Fix first element with outer loop
+    for (int i = 0; i < n - 3; i++) {
+
+        // Skip duplicate first elements
+        if (i && nums[i] == nums[i - 1]) continue;
+
+        // Fix second element with inner loop
+        for (int j = i + 1; j < n - 2; j++) {
+
+            // Skip duplicate second elements (but only from the second occurrence)
+            // j > i+1 means we're past the first pick for this j slot
+            if (j > i + 1 && nums[j] == nums[j - 1]) continue;
+
+            // Two pointers for third and fourth elements
+            int lo = j + 1;
+            int hi = n - 1;
+
+            while (lo < hi) {
+                // Use long long to avoid overflow: (long long)nums[i] casts first element to 64-bit
+                // Without this, four large ints might overflow 32-bit int
+                long long s = (long long)nums[i] + nums[j] + nums[lo] + nums[hi];
+
+                if (s == target) {
+                    res.push_back({nums[i], nums[j], nums[lo], nums[hi]});
+                    // Skip duplicates for lo and hi
+                    while (lo < hi && nums[lo] == nums[lo + 1]) lo++;
+                    while (lo < hi && nums[hi] == nums[hi - 1]) hi--;
+                    lo++;
+                    hi--;
+                } else if (s < target) {
+                    lo++;  // sum too small → increase lo
+                } else {
+                    hi--;  // sum too large → decrease hi
+                }
+            }
+        }
+    }
+
+    return res;
+}
+
+int main() {
+    vector<int> nums = {1, 0, -1, 0, -2, 2};
+    auto res = fourSum(nums, 0);
+    for (auto& q : res) cout << q[0]<<" "<<q[1]<<" "<<q[2]<<" "<<q[3] << endl;
+    return 0;
+}`,
+              expectedOutput: `-2 -1 1 2
+-2 0 0 2
+-1 0 0 1`,
             },
           ],
           hints: [
@@ -1529,6 +3637,67 @@ export const arraysSection: DSASection = {
     }
     return maxLen;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Find length of longest subarray with sum exactly 0
+// Key insight: if prefix[j] == prefix[i], then sum of arr[i+1..j] == 0
+// mp[sum] = FIRST index where this sum occurred (to maximize length)
+int maxLenZeroSum(vector<int>& arr) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {15, -2, 2, -8, 1, 7, 10, 23};
+    cout << maxLenZeroSum(test1) << endl;  // Expected: 5 (from index 1 to 5: -2,2,-8,1,7)
+
+    vector<int> test2 = {1, 2, 3};
+    cout << maxLenZeroSum(test2) << endl;  // Expected: 0 (no subarray sums to 0)
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int maxLenZeroSum(vector<int>& arr) {
+
+    // mp maps: prefix_sum → first index where this sum was seen
+    unordered_map<int, int> mp;
+
+    // Initialize: sum 0 was "seen" at index -1 (before array starts)
+    // This handles subarrays from index 0 (e.g., arr[0..j] has sum 0)
+    mp[0] = -1;
+
+    int ps = 0;       // running prefix sum
+    int maxLen = 0;   // answer
+
+    for (int i = 0; i < (int)arr.size(); i++) {
+
+        ps += arr[i];  // extend prefix sum to index i
+
+        // If ps was seen before at index mp[ps],
+        // then subarray (mp[ps]+1 .. i) has sum = ps - ps = 0
+        // Its length = i - mp[ps]
+        if (mp.count(ps)) {
+            maxLen = max(maxLen, i - mp[ps]);
+            // Do NOT update mp[ps] — we want the FIRST occurrence to maximize length
+        } else {
+            // First time seeing this prefix sum — record its index
+            mp[ps] = i;
+        }
+    }
+
+    return maxLen;
+}
+
+int main() {
+    vector<int> arr = {15, -2, 2, -8, 1, 7, 10, 23};
+    cout << maxLenZeroSum(arr) << endl;  // 5
+    return 0;
+}`,
+              expectedOutput: `5
+0`,
             },
           ],
           hints: [
@@ -1572,6 +3741,65 @@ export const arraysSection: DSASection = {
     }
     return count;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Count subarrays whose XOR equals k
+// XOR property: a ^ b = c implies a = b ^ c and b = a ^ c
+// prefXOR[j] ^ prefXOR[i] = k implies prefXOR[i] = prefXOR[j] ^ k
+int countSubarraysXorK(vector<int>& arr, int k) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {4, 2, 2, 6, 4};
+    cout << countSubarraysXorK(test1, 6) << endl;  // Expected: 4
+
+    vector<int> test2 = {5, 6, 7, 8, 9};
+    cout << countSubarraysXorK(test2, 5) << endl;  // Expected: 2
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+int countSubarraysXorK(vector<int>& arr, int k) {
+
+    // mp maps: prefix_XOR → how many times it has appeared
+    unordered_map<int, int> mp;
+
+    // XOR of empty prefix = 0, appears 1 time (before array starts)
+    // Handles subarrays starting from index 0
+    mp[0] = 1;
+
+    int prefXOR = 0;  // running prefix XOR (XOR of arr[0..i])
+    int count = 0;    // answer
+
+    for (int x : arr) {
+
+        prefXOR ^= x;  // extend prefix XOR: ^= means XOR-assign (prefXOR = prefXOR ^ x)
+
+        // If we want subarray XOR to equal k:
+        // prefXOR[j] ^ prefXOR[i] = k
+        // So prefXOR[i] = prefXOR[j] ^ k (XOR both sides by k)
+        // Count how many previous prefix XORs equal (prefXOR ^ k)
+        count += mp[prefXOR ^ k];  // mp[key] returns 0 if key not in map
+
+        // Record this prefix XOR
+        mp[prefXOR]++;
+    }
+
+    return count;
+}
+
+int main() {
+    vector<int> arr = {4, 2, 2, 6, 4};
+    cout << countSubarraysXorK(arr, 6) << endl;  // 4
+    return 0;
+}`,
+              expectedOutput: `4
+2`,
             },
           ],
           hints: [
@@ -1617,6 +3845,72 @@ export const arraysSection: DSASection = {
     }
     return res;
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Merge overlapping intervals and return non-overlapping result
+// res.back() = the LAST element in the result vector
+// res.back()[1] = the END of the last interval
+vector<vector<int>> merge(vector<vector<int>>& intervals) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<vector<int>> test1 = {{1,3},{2,6},{8,10},{15,18}};
+    vector<vector<int>> r1 = merge(test1);
+    for (auto& iv : r1) cout << "[" << iv[0] << "," << iv[1] << "] ";
+    cout << endl;  // Expected: [1,6] [8,10] [15,18]
+
+    vector<vector<int>> test2 = {{1,4},{4,5}};
+    vector<vector<int>> r2 = merge(test2);
+    for (auto& iv : r2) cout << "[" << iv[0] << "," << iv[1] << "] ";
+    cout << endl;  // Expected: [1,5]
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> merge(vector<vector<int>>& intervals) {
+
+    // Sort by start time: overlapping intervals will now be adjacent
+    // sort() with no comparator sorts vectors lexicographically (by first element first)
+    sort(intervals.begin(), intervals.end());
+
+    // Initialize result with the first interval
+    vector<vector<int>> res = {intervals[0]};
+
+    for (int i = 1; i < (int)intervals.size(); i++) {
+
+        // res.back() = the LAST interval currently in our result
+        // res.back()[0] = its start, res.back()[1] = its end
+
+        // Current interval starts BEFORE or AT the end of the last merged interval
+        // → They OVERLAP, so merge them
+        if (intervals[i][0] <= res.back()[1]) {
+            // Extend the end of the last interval if needed
+            // max() because the new interval might be entirely inside the last one
+            res.back()[1] = max(res.back()[1], intervals[i][1]);
+
+        } else {
+            // No overlap — start a new interval in the result
+            res.push_back(intervals[i]);
+        }
+    }
+
+    return res;
+}
+
+int main() {
+    vector<vector<int>> intervals = {{1,3},{2,6},{8,10},{15,18}};
+    auto res = merge(intervals);
+    for (auto& iv : res) cout << "[" << iv[0] << "," << iv[1] << "] ";
+    cout << endl;
+    return 0;
+}`,
+              expectedOutput: `[1,6] [8,10] [15,18]
+[1,5] `,
             },
           ],
           hints: [
@@ -1667,6 +3961,81 @@ export const arraysSection: DSASection = {
         gap = gap == 1 ? 0 : (gap + 1) / 2;
     }
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Merge two sorted arrays WITHOUT extra space — in-place using Shell Sort gap technique
+// Treat both arrays as a single virtual array of size m+n
+// Shrink gap each pass: gap = ceil(gap/2) until gap == 1, then set to 0 and stop
+void mergeNoSpace(vector<int>& a, int m, vector<int>& b, int n) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> a = {1, 3, 5, 7};
+    vector<int> b = {0, 2, 6, 8, 9};
+    mergeNoSpace(a, 4, b, 5);
+    for (int x : a) cout << x << " ";
+    cout << endl;  // Expected: 0 1 2 3
+    for (int x : b) cout << x << " ";
+    cout << endl;  // Expected: 5 6 7 8 9
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+void mergeNoSpace(vector<int>& a, int m, vector<int>& b, int n) {
+
+    // Treat both arrays as ONE virtual array of size m+n
+    // Index 0..m-1 → a[0..m-1]
+    // Index m..m+n-1 → b[0..n-1]
+    // We use Shell Sort's gap technique to sort this virtual array
+
+    int gap = (m + n + 1) / 2;  // starting gap = ceil((m+n)/2)
+
+    while (gap > 0) {
+
+        // Compare every pair (i, i+gap) in the virtual array and swap if needed
+        int i = 0, j = gap;  // i is left pointer, j = i + gap
+
+        while (j < m + n) {
+
+            // Get the actual value at virtual index i
+            // If i < m → it's in array a; else it's in array b at position i-m
+            int ai = i < m ? a[i] : b[i - m];
+
+            // Get the actual value at virtual index j (same logic)
+            int bj = j < m ? a[j] : b[j - m];
+
+            // If out of order, swap them in the correct array
+            if (ai > bj) {
+                if (i < m && j < m)     swap(a[i], a[j]);          // both in a
+                else if (i < m)         swap(a[i], b[j - m]);      // i in a, j in b
+                else                    swap(b[i - m], b[j - m]);  // both in b
+            }
+
+            i++;
+            j++;
+        }
+
+        // Halve the gap (round up): (gap+1)/2 = ceil(gap/2)
+        // Special case: when gap == 1, next would be 1 again → stop by setting to 0
+        gap = (gap == 1) ? 0 : (gap + 1) / 2;
+    }
+}
+
+int main() {
+    vector<int> a = {1, 3, 5, 7};
+    vector<int> b = {0, 2, 6, 8, 9};
+    mergeNoSpace(a, 4, b, 5);
+    for (int x : a) cout << x << " "; cout << endl;  // 0 1 2 3
+    for (int x : b) cout << x << " "; cout << endl;  // 5 6 7 8 9
+    return 0;
+}`,
+              expectedOutput: `0 1 2 3
+5 6 7 8 9 `,
             },
           ],
           hints: [
@@ -1712,6 +4081,72 @@ export const arraysSection: DSASection = {
     if (countA == 2) return {a, b}; // a repeating, b missing
     return {b, a};
 }`,
+              starterCode: `#include <bits/stdc++.h>
+using namespace std;
+
+// Array contains 1..N but one number is repeated and one is missing
+// pair<int,int> = a pair of two ints: {repeating, missing}
+// XOR trick: a ^ a = 0, a ^ 0 = a (any number XORed with itself cancels out)
+// xorAll & (-xorAll) = isolates the rightmost set bit
+pair<int,int> findMissingRepeating(vector<int>& arr) {
+    // Write your solution here
+
+}
+
+int main() {
+    vector<int> test1 = {3, 1, 2, 5, 3};  // 3 repeats, 4 is missing
+    auto [rep, miss] = findMissingRepeating(test1);
+    cout << "Repeating: " << rep << ", Missing: " << miss << endl;
+    // Expected: Repeating: 3, Missing: 4
+
+    return 0;
+}`,
+              solutionWithComments: `#include <bits/stdc++.h>
+using namespace std;
+
+// Returns {repeating, missing}
+pair<int,int> findMissingRepeating(vector<int>& arr) {
+
+    int n = arr.size();
+
+    // STEP 1: XOR all array elements AND all numbers 1..n
+    // In a perfect [1..n] array, every number would cancel out → xorAll = 0
+    // Since one is repeated (appears twice) and one is missing:
+    // xorAll = repeating ^ repeating ^ missing (one extra repeating, one missing)
+    //        = 0 ^ missing ^ repeating  (repeating cancels once, missing remains)
+    //        = repeating ^ missing
+    int xorAll = 0;
+    for (int x : arr) xorAll ^= x;
+    for (int i = 1; i <= n; i++) xorAll ^= i;
+
+    // STEP 2: Find any bit that DIFFERS between repeating and missing
+    // xorAll & (-xorAll) isolates the RIGHTMOST set bit
+    // -xorAll in two's complement = flip all bits and add 1 → rightmost set bit stays
+    int bit = xorAll & (-xorAll);
+
+    // STEP 3: Partition all numbers (from array and from 1..n) into two groups:
+    // Group A: numbers with this bit SET
+    // Group B: numbers with this bit CLEAR
+    // Each group's XOR gives one of the two candidates (repeating or missing)
+    int a = 0, b = 0;
+    for (int x : arr) { if (x & bit) a ^= x; else b ^= x; }
+    for (int i = 1; i <= n; i++) { if (i & bit) a ^= i; else b ^= i; }
+
+    // STEP 4: Verify which is repeating (appears twice) and which is missing
+    int countA = 0;
+    for (int x : arr) if (x == a) countA++;
+
+    if (countA == 2) return {a, b};  // a appears twice → a is repeating, b is missing
+    return {b, a};                   // b appears twice → b is repeating, a is missing
+}
+
+int main() {
+    vector<int> arr = {3, 1, 2, 5, 3};
+    auto [rep, miss] = findMissingRepeating(arr);
+    cout << "Repeating: " << rep << ", Missing: " << miss << endl;
+    return 0;
+}`,
+              expectedOutput: `Repeating: 3, Missing: 4`,
             },
           ],
           hints: [

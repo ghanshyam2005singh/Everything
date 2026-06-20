@@ -83,6 +83,15 @@ export const tracks: Track[] = [
     lessonCount: 21,
   },
   {
+    id: 'aws',
+    name: 'AWS Notes',
+    description: 'AWS cloud services: EC2, S3, RDS, Lambda, IAM, VPC, CloudFront, and more — notes + interview prep.',
+    icon: 'AW',
+    available: true,
+    color: 'from-orange-400 to-amber-500',
+    lessonCount: 18,
+  },
+  {
     id: 'devops',
     name: 'DevOps',
     description: 'Linux, Docker, Dockerfiles, Docker Compose, GitHub Actions, CI/CD, cloud fundamentals, and Kubernetes — everything a developer needs to build, deploy, and ship.',

@@ -16,6 +16,7 @@ import { messagingSystemsLesson } from './13-messaging-systems';
 import { rateLimitingLesson } from './14-rate-limiting';
 import { apiGatewayLesson } from './15-api-gateway';
 import { securityFundamentalsLesson } from './16-security-fundamentals';
+import { highLevelDesignLesson } from './17-high-level-design';
 import { lowLevelDesignLesson } from './17-low-level-design';
 import { designPatternsLesson } from './18-design-patterns';
 import { caseStudiesLesson } from './19-case-studies';
@@ -40,6 +41,7 @@ export const lessons: Lesson[] = [
   rateLimitingLesson,
   apiGatewayLesson,
   securityFundamentalsLesson,
+  highLevelDesignLesson,
   lowLevelDesignLesson,
   designPatternsLesson,
   caseStudiesLesson,
