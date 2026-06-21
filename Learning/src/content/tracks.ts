@@ -40,11 +40,11 @@ export const tracks: Track[] = [
   {
     id: 'nodejs',
     name: 'Node.js',
-    description: 'Server-side JavaScript with Express, REST APIs, authentication, and databases.',
+    description: 'Node.js internals, Express, REST APIs, authentication, real-time, queues, caching, security, and production deployment.',
     icon: 'ND',
-    available: false,
+    available: true,
     color: 'from-green-600 to-emerald-600',
-    lessonCount: 20,
+    lessonCount: 27,
   },
   {
     id: 'dsa',
