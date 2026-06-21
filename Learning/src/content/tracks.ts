@@ -15,7 +15,7 @@ export const tracks: Track[] = [
     name: 'TypeScript',
     description: 'Level up with static typing, generics, decorators, and enterprise-grade TypeScript patterns.',
     icon: 'TS',
-    available: false,
+    available: true,
     color: 'from-blue-500 to-blue-600',
     lessonCount: 18,
   },
