@@ -2,7 +2,7 @@ import { getLessons } from '@/lib/content';
 import { TrackLayout } from '@/components/layout/TrackLayout';
 import { notFound } from 'next/navigation';
 
-const VALID_TRACKS = ['javascript', 'typescript', 'databases', 'devops', 'system-design', 'nodejs'];
+const VALID_TRACKS = ['javascript', 'typescript', 'databases', 'devops', 'system-design', 'nodejs' , 'nextjs'];
 
 export default async function TrackRootLayout({
   children,

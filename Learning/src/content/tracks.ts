@@ -33,9 +33,9 @@ export const tracks: Track[] = [
     name: 'Next.js',
     description: 'Full-stack React with App Router, Server Components, streaming, and deployment.',
     icon: 'NX',
-    available: false,
+    available: true,
     color: 'from-gray-600 to-gray-700',
-    lessonCount: 16,
+    lessonCount: 27,
   },
   {
     id: 'nodejs',

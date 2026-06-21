@@ -19,6 +19,10 @@ import { projects as typescriptProjects } from '@/content/typescript/projects';
 import { lessons as nodejsLessons } from '@/content/nodejs/lessons';
 import { challenges as nodejsChallenges } from '@/content/nodejs/challenges';
 import { projects as nodejsProjects } from '@/content/nodejs/projects';
+import { lessons as nextjsLessons } from '@/content/nextjs/lessons';
+import { challenges as nextjsChallenges } from '@/content/nextjs/challenges';
+import { interviewQuestions as nextjsInterviewQuestions } from '@/content/nextjs/interview';
+import { projects as nextjsProjects } from '@/content/nextjs/projects';
 import type { Lesson, Challenge, Project, InterviewQuestion } from '@/types';
 
 export function getLessons(track: string): Lesson[] {
@@ -28,6 +32,7 @@ export function getLessons(track: string): Lesson[] {
   if (track === 'system-design') return systemDesignLessons;
   if (track === 'typescript') return typescriptLessons;
   if (track === 'nodejs') return nodejsLessons;
+  if (track === 'nextjs') return nextjsLessons;
   return [];
 }
 
@@ -54,6 +59,7 @@ export function getChallenges(track: string): Challenge[] {
   if (track === 'system-design') return systemDesignChallenges;
   if (track === 'typescript') return typescriptChallenges;
   if (track === 'nodejs') return nodejsChallenges;
+  if (track === 'nextjs') return nextjsChallenges;
   return [];
 }
 
@@ -65,6 +71,7 @@ export function getProjects(track: string): Project[] {
   if (track === 'javascript') return projects;
   if (track === 'typescript') return typescriptProjects;
   if (track === 'nodejs') return nodejsProjects;
+  if (track === 'nextjs') return nextjsProjects;
   return [];
 }
 
@@ -79,5 +86,6 @@ export function getInterviewQuestions(track: string): InterviewQuestion[] {
   if (track === 'system-design') return systemDesignInterviewQuestions;
   if (track === 'typescript') return typescriptInterviewQuestions;
   if (track === 'nodejs') return nodejsInterviewQuestions;
+  if (track === 'nextjs') return nextjsInterviewQuestions;
   return [];
 }
