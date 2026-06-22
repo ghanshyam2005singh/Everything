@@ -104,7 +104,8 @@ export function Notes({ isOpen, onClose }: NotesProps) {
 
   if (size === 'minimized') {
     return (
-      <div className="fixed bottom-24 right-6 z-50" style={{ right: '5.5rem' }}>
+      // On mobile: bottom-right above FAB. On desktop: offset left of AI panel.
+      <div className="fixed bottom-24 right-4 sm:right-24 z-50">
         <button
           onClick={() => setSize('normal')}
           className="flex items-center gap-2 px-4 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-medium rounded-full shadow-xl shadow-emerald-900/40 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400"
@@ -131,10 +132,9 @@ export function Notes({ isOpen, onClose }: NotesProps) {
     <div
       className={`fixed z-50 flex flex-col bg-[#07070b] border border-slate-700/60 shadow-2xl shadow-black/60 transition-all duration-200 ${
         isMax
-          ? 'inset-4 sm:inset-6 rounded-2xl'
-          : 'bottom-24 right-6 w-[min(480px,calc(100vw-3rem))] h-[min(620px,calc(100vh-8rem))] rounded-2xl'
+          ? 'inset-3 sm:inset-6 rounded-2xl'
+          : 'bottom-24 right-4 sm:right-24 w-[calc(100vw-2rem)] sm:w-[min(480px,calc(100vw-3rem))] h-[min(620px,calc(100vh-7rem))] rounded-2xl'
       }`}
-      style={!isMax ? { right: '5.5rem' } : undefined}
       role="dialog"
       aria-label="Notes"
       aria-modal="true"
@@ -161,8 +161,7 @@ export function Notes({ isOpen, onClose }: NotesProps) {
             <button
               onClick={() => setView('grid')}
               className={`p-1.5 rounded-lg transition-colors ${view === 'grid' ? 'bg-slate-700 text-slate-200' : 'text-slate-500 hover:text-slate-300'}`}
-              aria-label="Grid view"
-              title="Grid view"
+              aria-label="Grid view" title="Grid view"
             >
               <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
                 <rect x="1" y="1" width="6" height="6" rx="1" />
@@ -174,8 +173,7 @@ export function Notes({ isOpen, onClose }: NotesProps) {
             <button
               onClick={() => setView('list')}
               className={`p-1.5 rounded-lg transition-colors ${view === 'list' ? 'bg-slate-700 text-slate-200' : 'text-slate-500 hover:text-slate-300'}`}
-              aria-label="List view"
-              title="List view"
+              aria-label="List view" title="List view"
             >
               <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <line x1="8" y1="6" x2="21" y2="6" />
@@ -203,17 +201,13 @@ export function Notes({ isOpen, onClose }: NotesProps) {
           >
             {isMax ? (
               <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <polyline points="4,14 10,14 10,20" />
-                <polyline points="20,10 14,10 14,4" />
-                <line x1="10" y1="14" x2="3" y2="21" />
-                <line x1="21" y1="3" x2="14" y2="10" />
+                <polyline points="4,14 10,14 10,20" /><polyline points="20,10 14,10 14,4" />
+                <line x1="10" y1="14" x2="3" y2="21" /><line x1="21" y1="3" x2="14" y2="10" />
               </svg>
             ) : (
               <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <polyline points="15,3 21,3 21,9" />
-                <polyline points="9,21 3,21 3,15" />
-                <line x1="21" y1="3" x2="14" y2="10" />
-                <line x1="3" y1="21" x2="10" y2="14" />
+                <polyline points="15,3 21,3 21,9" /><polyline points="9,21 3,21 3,15" />
+                <line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" />
               </svg>
             )}
           </button>
@@ -223,14 +217,13 @@ export function Notes({ isOpen, onClose }: NotesProps) {
             aria-label="Close Notes" title="Close"
           >
             <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
       </div>
 
-      {/* Editor panel or list panel */}
+      {/* Editor or list */}
       {(editingNote || isCreating) ? (
         <NoteEditor
           note={editingNote}
@@ -242,10 +235,7 @@ export function Notes({ isOpen, onClose }: NotesProps) {
               await handleCreate(input);
             }
           }}
-          onClose={() => {
-            setEditingNote(null);
-            setIsCreating(false);
-          }}
+          onClose={() => { setEditingNote(null); setIsCreating(false); }}
           onDelete={editingNote ? () => handleDelete(editingNote.id) : undefined}
         />
       ) : (
@@ -254,8 +244,7 @@ export function Notes({ isOpen, onClose }: NotesProps) {
           <div className="px-4 py-3 border-b border-slate-800 shrink-0 flex items-center gap-2">
             <div className="flex-1 flex items-center gap-2 bg-slate-800/50 border border-slate-700/60 rounded-lg px-3 py-1.5 focus-within:border-slate-600">
               <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" className="text-slate-500 shrink-0">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
               <input
                 type="text"
@@ -268,8 +257,7 @@ export function Notes({ isOpen, onClose }: NotesProps) {
               {search && (
                 <button onClick={() => setSearch('')} className="text-slate-500 hover:text-slate-300" aria-label="Clear search">
                   <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
+                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
                 </button>
               )}
@@ -292,7 +280,7 @@ export function Notes({ isOpen, onClose }: NotesProps) {
                 </div>
                 <p className="text-sm font-medium text-slate-300 mb-1">Firebase not configured</p>
                 <p className="text-xs text-slate-500 max-w-xs">
-                  Add Firebase credentials to <code className="text-violet-400">.env.local</code> to enable note syncing. See <code className="text-violet-400">.env.local.example</code>.
+                  Add Firebase credentials to <code className="text-violet-400">.env.local</code> to enable note syncing.
                 </p>
               </div>
             )}
@@ -304,9 +292,7 @@ export function Notes({ isOpen, onClose }: NotesProps) {
             {firebaseReady && error && (
               <div className="flex flex-col items-center justify-center h-32 gap-2">
                 <p className="text-sm text-red-400">{error}</p>
-                <button onClick={loadNotes} className="text-xs text-emerald-400 hover:underline">
-                  Retry
-                </button>
+                <button onClick={loadNotes} className="text-xs text-emerald-400 hover:underline">Retry</button>
               </div>
             )}
             {firebaseReady && !loading && !error && filtered.length === 0 && (
@@ -324,23 +310,14 @@ export function Notes({ isOpen, onClose }: NotesProps) {
                   {search ? 'Try a different search term' : 'Create your first note while learning'}
                 </p>
                 {!search && (
-                  <button
-                    onClick={() => setIsCreating(true)}
-                    className="mt-3 text-xs text-emerald-400 hover:underline"
-                  >
+                  <button onClick={() => setIsCreating(true)} className="mt-3 text-xs text-emerald-400 hover:underline">
                     Create note
                   </button>
                 )}
               </div>
             )}
             {firebaseReady && !loading && !error && filtered.length > 0 && (
-              <div
-                className={
-                  view === 'grid'
-                    ? 'grid grid-cols-1 sm:grid-cols-2 gap-3'
-                    : 'flex flex-col gap-2'
-                }
-              >
+              <div className={view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : 'flex flex-col gap-2'}>
                 {filtered.map((note) => (
                   <NoteCard
                     key={note.id}

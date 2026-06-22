@@ -54,11 +54,17 @@ export async function fetchNotes(): Promise<Note[]> {
 
 export async function createNote(input: NoteInput): Promise<Note> {
   const now = serverTimestamp();
-  const ref = await addDoc(notesRef(), {
-    ...input,
+  const data: Record<string, unknown> = {
+    title: input.title,
+    content: input.content,
+    type: input.type,
     createdAt: now,
     updatedAt: now,
-  });
+  };
+  if (input.language !== undefined) {
+    data.language = input.language;
+  }
+  const ref = await addDoc(notesRef(), data);
   return {
     id: ref.id,
     ...input,
@@ -69,10 +75,12 @@ export async function createNote(input: NoteInput): Promise<Note> {
 
 export async function updateNote(id: string, input: Partial<NoteInput>): Promise<void> {
   const ref = doc(db, COLLECTION, id);
-  await updateDoc(ref, {
-    ...input,
-    updatedAt: serverTimestamp(),
-  });
+  const data: Record<string, unknown> = { updatedAt: serverTimestamp() };
+  if (input.title !== undefined) data.title = input.title;
+  if (input.content !== undefined) data.content = input.content;
+  if (input.type !== undefined) data.type = input.type;
+  if (input.language !== undefined) data.language = input.language;
+  await updateDoc(ref, data);
 }
 
 export async function deleteNote(id: string): Promise<void> {
