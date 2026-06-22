@@ -2,6 +2,7 @@
 
 import { useState, lazy, Suspense } from 'react';
 import { FloatingActionButton } from './FloatingActionButton';
+import { ServiceWorkerRegistrar } from './ServiceWorkerRegistrar';
 
 const AIAssistant = lazy(() =>
   import('@/components/ai-assistant/AIAssistant').then((m) => ({ default: m.AIAssistant }))
@@ -16,6 +17,7 @@ export function GlobalProviders() {
 
   return (
     <>
+      <ServiceWorkerRegistrar />
       <FloatingActionButton
         onOpenAI={() => setAiOpen(true)}
         onOpenNotes={() => setNotesOpen(true)}
