@@ -23,6 +23,10 @@ import { lessons as nextjsLessons } from '@/content/nextjs/lessons';
 import { challenges as nextjsChallenges } from '@/content/nextjs/challenges';
 import { interviewQuestions as nextjsInterviewQuestions } from '@/content/nextjs/interview';
 import { projects as nextjsProjects } from '@/content/nextjs/projects';
+import { reactLessons } from '@/content/react/lessons';
+import { reactChallenges } from '@/content/react/challenges';
+import { reactInterviewQuestions } from '@/content/react/interview';
+import { reactProjects } from '@/content/react/projects';
 import type { Lesson, Challenge, Project, InterviewQuestion } from '@/types';
 
 export function getLessons(track: string): Lesson[] {
@@ -33,6 +37,7 @@ export function getLessons(track: string): Lesson[] {
   if (track === 'typescript') return typescriptLessons;
   if (track === 'nodejs') return nodejsLessons;
   if (track === 'nextjs') return nextjsLessons;
+  if (track === 'react') return reactLessons;
   return [];
 }
 
@@ -60,6 +65,7 @@ export function getChallenges(track: string): Challenge[] {
   if (track === 'typescript') return typescriptChallenges;
   if (track === 'nodejs') return nodejsChallenges;
   if (track === 'nextjs') return nextjsChallenges;
+  if (track === 'react') return reactChallenges;
   return [];
 }
 
@@ -72,6 +78,7 @@ export function getProjects(track: string): Project[] {
   if (track === 'typescript') return typescriptProjects;
   if (track === 'nodejs') return nodejsProjects;
   if (track === 'nextjs') return nextjsProjects;
+  if (track === 'react') return reactProjects;
   return [];
 }
 
@@ -87,5 +94,6 @@ export function getInterviewQuestions(track: string): InterviewQuestion[] {
   if (track === 'typescript') return typescriptInterviewQuestions;
   if (track === 'nodejs') return nodejsInterviewQuestions;
   if (track === 'nextjs') return nextjsInterviewQuestions;
+  if (track === 'react') return reactInterviewQuestions;
   return [];
 }

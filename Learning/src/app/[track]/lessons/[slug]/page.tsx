@@ -3,7 +3,7 @@ import { LessonClient } from './LessonClient';
 import { notFound } from 'next/navigation';
 
 export function generateStaticParams() {
-  const tracks = ['javascript', 'databases'];
+  const tracks = ['javascript', 'typescript', 'databases', 'devops', 'system-design', 'nodejs', 'nextjs', 'react'];
   return tracks.flatMap((track) =>
     getLessons(track).map((l) => ({ track, slug: l.slug }))
   );

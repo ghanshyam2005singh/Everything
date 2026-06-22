@@ -10,6 +10,7 @@ const TRACK_META: Record<string, { name: string; icon: string; color: string }> 
   'system-design': { name: 'System Design', icon: 'SD', color: 'from-teal-500 to-cyan-600' },
   nodejs:        { name: 'Node.js',       icon: 'ND', color: 'from-green-600 to-emerald-600' },
   nextjs:        { name: 'Next.js',       icon: 'NX', color: 'from-gray-700 to-gray-900' },
+  react:         { name: 'React',         icon: 'RE', color: 'from-cyan-500 to-sky-500' },
 };
 
 export default async function TrackOverviewPage({ params }: { params: Promise<{ track: string }> }) {

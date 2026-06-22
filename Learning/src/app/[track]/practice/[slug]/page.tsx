@@ -3,8 +3,10 @@ import { ChallengeClient } from './ChallengeClient';
 import { notFound } from 'next/navigation';
 
 export function generateStaticParams() {
-  const challenges = getChallenges('javascript');
-  return challenges.map((c) => ({ track: 'javascript', slug: c.slug }));
+  const tracks = ['javascript', 'typescript', 'databases', 'devops', 'system-design', 'nodejs', 'nextjs', 'react'];
+  return tracks.flatMap((track) =>
+    getChallenges(track).map((c) => ({ track, slug: c.slug }))
+  );
 }
 
 export default async function ChallengePage({ params }: { params: Promise<{ track: string; slug: string }> }) {

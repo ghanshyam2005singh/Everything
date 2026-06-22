@@ -24,9 +24,9 @@ export const tracks: Track[] = [
     name: 'React',
     description: 'Build modern UIs with hooks, context, performance patterns, and React 19 features.',
     icon: 'RE',
-    available: false,
+    available: true,
     color: 'from-cyan-500 to-sky-500',
-    lessonCount: 22,
+    lessonCount: 30,
   },
   {
     id: 'nextjs',

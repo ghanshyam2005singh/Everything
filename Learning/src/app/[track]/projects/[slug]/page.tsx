@@ -3,8 +3,10 @@ import { ProjectPageClient } from './ProjectPageClient';
 import { notFound } from 'next/navigation';
 
 export function generateStaticParams() {
-  const projects = getProjects('javascript');
-  return projects.map((p) => ({ track: 'javascript', slug: p.slug }));
+  const tracks = ['javascript', 'typescript', 'nodejs', 'nextjs', 'react'];
+  return tracks.flatMap((track) =>
+    getProjects(track).map((p) => ({ track, slug: p.slug }))
+  );
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ track: string; slug: string }> }) {
