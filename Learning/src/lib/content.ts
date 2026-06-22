@@ -31,6 +31,10 @@ import { webdevLessons } from '@/content/webdev/lessons';
 import { webdevChallenges } from '@/content/webdev/challenges';
 import { webdevInterviewQuestions } from '@/content/webdev/interview';
 import { webdevProjects } from '@/content/webdev/projects';
+import { placementLessons } from '@/content/placement/lessons';
+import { placementChallenges } from '@/content/placement/challenges';
+import { placementInterviewQuestions } from '@/content/placement/interview';
+import { placementProjects } from '@/content/placement/projects';
 import type { Lesson, Challenge, Project, InterviewQuestion } from '@/types';
 
 export function getLessons(track: string): Lesson[] {
@@ -43,6 +47,7 @@ export function getLessons(track: string): Lesson[] {
   if (track === 'nextjs') return nextjsLessons;
   if (track === 'react') return reactLessons;
   if (track === 'webdev') return webdevLessons;
+  if (track === 'placement') return placementLessons;
   return [];
 }
 
@@ -72,6 +77,7 @@ export function getChallenges(track: string): Challenge[] {
   if (track === 'nextjs') return nextjsChallenges;
   if (track === 'react') return reactChallenges;
   if (track === 'webdev') return webdevChallenges;
+  if (track === 'placement') return placementChallenges;
   return [];
 }
 
@@ -86,6 +92,7 @@ export function getProjects(track: string): Project[] {
   if (track === 'nextjs') return nextjsProjects;
   if (track === 'react') return reactProjects;
   if (track === 'webdev') return webdevProjects;
+  if (track === 'placement') return placementProjects;
   return [];
 }
 
@@ -103,5 +110,6 @@ export function getInterviewQuestions(track: string): InterviewQuestion[] {
   if (track === 'nextjs') return nextjsInterviewQuestions;
   if (track === 'react') return reactInterviewQuestions;
   if (track === 'webdev') return webdevInterviewQuestions;
+  if (track === 'placement') return placementInterviewQuestions;
   return [];
 }

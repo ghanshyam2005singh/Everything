@@ -12,6 +12,7 @@ const TRACK_META: Record<string, { name: string; icon: string; color: string }> 
   nextjs:        { name: 'Next.js',       icon: 'NX', color: 'from-gray-700 to-gray-900' },
   react:         { name: 'React',         icon: 'RE', color: 'from-cyan-500 to-sky-500' },
   webdev:        { name: 'Web Development', icon: 'WD', color: 'from-pink-500 to-rose-600' },
+  placement:     { name: 'Placement & Interview Prep', icon: 'PL', color: 'from-indigo-500 to-violet-600' },
 };
 
 export default async function TrackOverviewPage({ params }: { params: Promise<{ track: string }> }) {

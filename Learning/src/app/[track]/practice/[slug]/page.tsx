@@ -3,7 +3,7 @@ import { ChallengeClient } from './ChallengeClient';
 import { notFound } from 'next/navigation';
 
 export function generateStaticParams() {
-  const tracks = ['javascript', 'typescript', 'databases', 'devops', 'system-design', 'nodejs', 'nextjs', 'react'];
+  const tracks = ['javascript', 'typescript', 'databases', 'devops', 'system-design', 'nodejs', 'nextjs', 'react', 'placement'];
   return tracks.flatMap((track) =>
     getChallenges(track).map((c) => ({ track, slug: c.slug }))
   );
