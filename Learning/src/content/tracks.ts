@@ -129,13 +129,4 @@ export const tracks: Track[] = [
     color: 'from-orange-400 to-amber-500',
     lessonCount: 18,
   },
-  {
-    id: 'ai',
-    name: 'AI for Developers',
-    description: 'Prompting, LLM APIs, embeddings, RAG, AI-powered apps, and integrating AI into your workflow.',
-    icon: 'AI',
-    available: false,
-    color: 'from-purple-500 to-pink-500',
-    lessonCount: 16,
-  },
 ];

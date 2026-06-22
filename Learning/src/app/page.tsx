@@ -196,30 +196,30 @@ export default function HomePage() {
           </div>
 
           {/* Numbered list for roadmap tracks */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-10">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
             {roadmapTracks.map((track, i) => (
               <Link
                 key={track.id}
                 href={`/${track.id}`}
-                className="group flex items-start gap-4 p-4 rounded-xl bg-slate-900/50 border border-slate-800/60 hover:border-violet-500/40 hover:bg-slate-900 transition-all"
+                className="group flex items-start gap-4 p-5 sm:p-6 rounded-2xl bg-slate-900/50 border border-slate-800/60 hover:border-violet-500/40 hover:bg-slate-900 transition-all"
               >
                 {/* Step number */}
-                <span className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold bg-slate-800 text-slate-500 group-hover:bg-violet-500/20 group-hover:text-violet-400 transition-colors mt-0.5">
+                <span className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold bg-slate-800 text-slate-500 group-hover:bg-violet-500/20 group-hover:text-violet-400 transition-colors mt-0.5">
                   {i + 1}
                 </span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   {/* Icon + name */}
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`inline-flex w-6 h-6 rounded-md items-center justify-center text-[10px] font-bold bg-linear-to-br ${track.color} text-white shrink-0`}>
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <span className={`inline-flex w-8 h-8 rounded-lg items-center justify-center text-sm font-bold bg-linear-to-br ${track.color} text-white shrink-0`}>
                       {track.icon}
                     </span>
-                    <span className="font-semibold text-slate-200 group-hover:text-white text-sm truncate transition-colors">
+                    <span className="font-semibold text-slate-100 group-hover:text-white text-base truncate transition-colors">
                       {track.name}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">{track.description}</p>
+                  <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">{track.description}</p>
                   {track.lessonCount && (
-                    <span className="inline-block mt-2 text-[10px] text-slate-600 group-hover:text-violet-400 transition-colors">
+                    <span className="inline-block mt-2.5 text-xs text-slate-600 group-hover:text-violet-400 transition-colors font-medium">
                       {track.lessonCount}+ lessons →
                     </span>
                   )}

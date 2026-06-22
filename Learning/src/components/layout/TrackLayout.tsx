@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import type { Lesson } from '@/types';
 
@@ -13,15 +14,50 @@ interface TrackLayoutProps {
 
 export function TrackLayout({ children, track, lessons }: TrackLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  // Auto-close sidebar on navigation
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
+
+  // Close on outside click (touch + mouse)
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    function handlePointer(e: MouseEvent | TouchEvent) {
+      const target = e.target as Node;
+      if (overlayRef.current && overlayRef.current === target) {
+        setSidebarOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handlePointer);
+    document.addEventListener('touchstart', handlePointer);
+    return () => {
+      document.removeEventListener('mousedown', handlePointer);
+      document.removeEventListener('touchstart', handlePointer);
+    };
+  }, [sidebarOpen]);
+
+  // Prevent body scroll when sidebar is open on mobile
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [sidebarOpen]);
 
   return (
     <div className="h-screen bg-[#050508] flex flex-col overflow-hidden">
       {/* Mobile header */}
-      <header className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#07070b]/90 border-b border-slate-800/50 shrink-0 z-20 backdrop-blur-sm">
+      <header className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#07070b]/90 border-b border-slate-800/50 shrink-0 z-20 backdrop-blur-sm sticky top-0">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="p-2 -ml-2 text-slate-500 hover:text-slate-200 transition-colors rounded-lg"
+          className="p-2 -ml-2 text-slate-500 hover:text-slate-200 active:bg-slate-800 transition-colors rounded-lg touch-manipulation"
           aria-label="Open navigation"
+          aria-expanded={sidebarOpen}
         >
           <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
             <line x1="1" y1="5" x2="17" y2="5" />
@@ -43,20 +79,25 @@ export function TrackLayout({ children, track, lessons }: TrackLayoutProps) {
         </div>
 
         {/* Mobile sidebar overlay */}
-        {sidebarOpen && (
-          <div className="fixed inset-0 z-30 lg:hidden">
-            <div
-              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-              onClick={() => setSidebarOpen(false)}
-            />
-            <div className="absolute left-0 top-0 bottom-0 z-10">
-              <Sidebar track={track} lessons={lessons} />
-            </div>
+        <div
+          ref={overlayRef}
+          className={`fixed inset-0 z-30 lg:hidden transition-opacity duration-200 ${
+            sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
+          style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+          aria-hidden={!sidebarOpen}
+        >
+          <div
+            className={`absolute left-0 top-0 bottom-0 z-10 transition-transform duration-200 ${
+              sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
+          >
+            <Sidebar track={track} lessons={lessons} onCloseMobile={() => setSidebarOpen(false)} />
           </div>
-        )}
+        </div>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto min-w-0">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             {children}
           </div>

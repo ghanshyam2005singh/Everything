@@ -54,6 +54,8 @@ const mdComponents = {
   ),
   code: ({ className, children, ...props }: React.HTMLAttributes<HTMLElement>) => {
     const isBlock = className?.startsWith('language-');
+    const content = String(children ?? '');
+
     if (isBlock) {
       return (
         <pre className="bg-slate-900 border border-slate-700/60 rounded-xl p-4 overflow-x-auto my-4">
@@ -61,6 +63,34 @@ const mdComponents = {
         </pre>
       );
     }
+
+    // Detect plain fenced blocks that contain ASCII diagrams (box-drawing chars or arrow art)
+    if (!className && content.includes('\n')) {
+      const isDiagram =
+        /[┌┐└┘├┤┬┴┼─│╔╗╚╝╠╣╦╩╬═║▼▲◄►←→↑↓]/.test(content) ||
+        /^\s*(User|Browser|Client|Server|API|DB|Cache|Queue|──|==|\|\s|\s\|)/m.test(content);
+
+      if (isDiagram) {
+        return (
+          <div className="my-5 rounded-xl overflow-hidden border border-slate-700/40 bg-slate-950/80">
+            <div className="px-3 py-1.5 bg-slate-800/60 border-b border-slate-700/40 flex items-center gap-2">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Architecture Diagram</span>
+            </div>
+            <pre className="overflow-x-auto p-4 sm:p-5">
+              <code className="text-[13px] leading-relaxed font-mono text-slate-300 whitespace-pre">{content}</code>
+            </pre>
+          </div>
+        );
+      }
+
+      // Generic unlabelled code block
+      return (
+        <pre className="bg-slate-900 border border-slate-700/60 rounded-xl p-4 overflow-x-auto my-4">
+          <code className="text-sm font-mono text-slate-200 whitespace-pre">{children}</code>
+        </pre>
+      );
+    }
+
     return (
       <code className="px-1.5 py-0.5 rounded bg-slate-800 text-violet-300 text-[0.85em] font-mono" {...props}>
         {children}
@@ -142,7 +172,7 @@ export function LessonContent({ lesson, track, isComplete, onToggleComplete }: L
           <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-5 space-y-3">
             {lesson.commonMistakes.map((mistake, i) => (
               <div key={i} className="flex items-start gap-3">
-                <span className="text-red-400 mt-0.5 flex-shrink-0">⚠</span>
+                <span className="text-red-400 mt-0.5 shrink-0">⚠</span>
                 <p className="text-slate-300 text-sm leading-relaxed">{mistake}</p>
               </div>
             ))}
@@ -165,7 +195,7 @@ export function LessonContent({ lesson, track, isComplete, onToggleComplete }: L
                     <Badge variant={q.difficulty}>{q.difficulty}</Badge>
                     <span className="text-sm text-slate-200 font-medium">{q.question}</span>
                   </div>
-                  <span className="text-slate-500 flex-shrink-0">{openQuestions.has(i) ? '▲' : '▼'}</span>
+                  <span className="text-slate-500 shrink-0">{openQuestions.has(i) ? '▲' : '▼'}</span>
                 </button>
                 {openQuestions.has(i) && (
                   <div className="px-4 py-4 border-t border-slate-700/60 bg-slate-900/40">
@@ -212,7 +242,7 @@ export function LessonContent({ lesson, track, isComplete, onToggleComplete }: L
           <div className="bg-violet-500/5 border border-violet-500/20 rounded-xl p-5 space-y-2">
             {lesson.keyTakeaways.map((point, i) => (
               <div key={i} className="flex items-start gap-3">
-                <span className="text-violet-400 mt-0.5 flex-shrink-0">✓</span>
+                <span className="text-violet-400 mt-0.5 shrink-0">✓</span>
                 <p className="text-slate-300 text-sm">{point}</p>
               </div>
             ))}
