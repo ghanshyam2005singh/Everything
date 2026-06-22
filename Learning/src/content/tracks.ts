@@ -58,11 +58,11 @@ export const tracks: Track[] = [
   {
     id: 'webdev',
     name: 'Web Development',
-    description: 'HTML, CSS, Flexbox, Grid, responsive design, accessibility, and browser APIs from the ground up.',
+    description: 'Full stack development, real-world architecture, authentication, deployment, team workflows, and industry practices — the bridge from learning to building products.',
     icon: 'WD',
-    available: false,
+    available: true,
     color: 'from-orange-500 to-rose-500',
-    lessonCount: 25,
+    lessonCount: 21,
   },
   {
     id: 'system-design',
