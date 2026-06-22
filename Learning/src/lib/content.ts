@@ -35,6 +35,10 @@ import { placementLessons } from '@/content/placement/lessons';
 import { placementChallenges } from '@/content/placement/challenges';
 import { placementInterviewQuestions } from '@/content/placement/interview';
 import { placementProjects } from '@/content/placement/projects';
+import { behavioralLessons } from '@/content/behavioral/lessons';
+import { behavioralChallenges } from '@/content/behavioral/challenges';
+import { behavioralInterviewQuestions } from '@/content/behavioral/interview';
+import { behavioralProjects } from '@/content/behavioral/projects';
 import type { Lesson, Challenge, Project, InterviewQuestion } from '@/types';
 
 export function getLessons(track: string): Lesson[] {
@@ -48,6 +52,7 @@ export function getLessons(track: string): Lesson[] {
   if (track === 'react') return reactLessons;
   if (track === 'webdev') return webdevLessons;
   if (track === 'placement') return placementLessons;
+  if (track === 'behavioral') return behavioralLessons;
   return [];
 }
 
@@ -78,6 +83,7 @@ export function getChallenges(track: string): Challenge[] {
   if (track === 'react') return reactChallenges;
   if (track === 'webdev') return webdevChallenges;
   if (track === 'placement') return placementChallenges;
+  if (track === 'behavioral') return behavioralChallenges;
   return [];
 }
 
@@ -93,6 +99,7 @@ export function getProjects(track: string): Project[] {
   if (track === 'react') return reactProjects;
   if (track === 'webdev') return webdevProjects;
   if (track === 'placement') return placementProjects;
+  if (track === 'behavioral') return behavioralProjects;
   return [];
 }
 
@@ -111,5 +118,6 @@ export function getInterviewQuestions(track: string): InterviewQuestion[] {
   if (track === 'react') return reactInterviewQuestions;
   if (track === 'webdev') return webdevInterviewQuestions;
   if (track === 'placement') return placementInterviewQuestions;
+  if (track === 'behavioral') return behavioralInterviewQuestions;
   return [];
 }

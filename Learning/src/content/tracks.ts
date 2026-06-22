@@ -112,11 +112,11 @@ export const tracks: Track[] = [
   {
     id: 'behavioral',
     name: 'Behavioral Interviews',
-    description: 'STAR method, common HR questions, leadership principles, conflict resolution, and self-intro.',
+    description: 'STAR method, HR and behavioral rounds, leadership, conflict, failure, self-intro, mock interviews, and 100+ question bank — everything to communicate authentically and confidently.',
     icon: 'BEH',
-    available: false,
+    available: true,
     color: 'from-cyan-500 to-blue-500',
-    lessonCount: 12,
+    lessonCount: 17,
   },
   {
     id: 'placement',
