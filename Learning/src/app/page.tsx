@@ -51,15 +51,25 @@ function TrackCard({ track }: { track: Track }) {
   return card;
 }
 
+// Tracks shown in the numbered roadmap on the home page (in order)
+const ROADMAP_IDS = [
+  'javascript', 'typescript', 'react', 'databases', 'nodejs',
+  'nextjs', 'webdev', 'devops', 'system-design', 'dsa',
+  'placement', 'behavioral', 'ai-engineering',
+];
+
 export default function HomePage() {
-  const availableTracks = tracks.filter((t) => t.available);
-  const comingTracks = tracks.filter((t) => !t.available);
+  const roadmapTracks = ROADMAP_IDS
+    .map((id) => tracks.find((t) => t.id === id))
+    .filter(Boolean) as typeof tracks;
+  const supplementaryTracks = tracks.filter((t) => !ROADMAP_IDS.includes(t.id));
+  const firstTrack = roadmapTracks[0];
 
   const stats = [
-    { label: 'Lessons', value: '30+' },
-    { label: 'Challenges', value: '15+' },
-    { label: 'Projects', value: '8' },
-    { label: 'Interview Q&A', value: '50+' },
+    { label: 'Lessons', value: '400+' },
+    { label: 'Challenges', value: '50+' },
+    { label: 'Projects', value: '20+' },
+    { label: 'Interview Q&A', value: '200+' },
   ];
 
   const features = [
@@ -145,25 +155,21 @@ export default function HomePage() {
           </h1>
 
           <p className="text-lg sm:text-xl text-slate-500 max-w-xl mx-auto mb-10 leading-relaxed">
-            Interactive lessons, hands-on projects, coding practice, and interview prep — all in one place.
+            A structured roadmap from JavaScript fundamentals to AI Engineering — with lessons, projects, challenges, and interview prep.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
-            {availableTracks.map((track) => (
-              <Link
-                key={track.id}
-                href={`/${track.id}`}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-sm transition-all shadow-xl shadow-violet-600/25 hover:shadow-violet-500/30 hover:-translate-y-0.5"
-              >
-                Start {track.name}
-                <span>→</span>
-              </Link>
-            ))}
             <Link
-              href="#tracks"
+              href="/javascript"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-sm transition-all shadow-xl shadow-violet-600/25 hover:shadow-violet-500/30 hover:-translate-y-0.5"
+            >
+              Start the Roadmap →
+            </Link>
+            <Link
+              href="#roadmap"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-600 text-slate-400 hover:text-slate-200 font-semibold text-sm transition-all"
             >
-              Browse Tracks
+              View Roadmap
             </Link>
           </div>
         </section>
@@ -180,30 +186,59 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Tracks */}
-        <section id="tracks" className="mb-20 scroll-mt-20">
+        {/* Roadmap */}
+        <section id="roadmap" className="mb-20 scroll-mt-20">
           <div className="mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Learning Tracks</h2>
-            <p className="text-slate-500 text-sm sm:text-base">Start with JavaScript. More tracks dropping one by one.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">The Roadmap</h2>
+            <p className="text-slate-500 text-sm sm:text-base">
+              13 tracks in the order they build on each other. Start at 1, end at 13.
+            </p>
           </div>
 
-          <div className="mb-6">
-            <p className="text-xs font-semibold text-slate-600 uppercase tracking-widest mb-4">Available Now</p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {availableTracks.map((track) => (
-                <TrackCard key={track.id} track={track} />
-              ))}
-            </div>
+          {/* Numbered list for roadmap tracks */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-10">
+            {roadmapTracks.map((track, i) => (
+              <Link
+                key={track.id}
+                href={`/${track.id}`}
+                className="group flex items-start gap-4 p-4 rounded-xl bg-slate-900/50 border border-slate-800/60 hover:border-violet-500/40 hover:bg-slate-900 transition-all"
+              >
+                {/* Step number */}
+                <span className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold bg-slate-800 text-slate-500 group-hover:bg-violet-500/20 group-hover:text-violet-400 transition-colors mt-0.5">
+                  {i + 1}
+                </span>
+                <div className="min-w-0">
+                  {/* Icon + name */}
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`inline-flex w-6 h-6 rounded-md items-center justify-center text-[10px] font-bold bg-linear-to-br ${track.color} text-white shrink-0`}>
+                      {track.icon}
+                    </span>
+                    <span className="font-semibold text-slate-200 group-hover:text-white text-sm truncate transition-colors">
+                      {track.name}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">{track.description}</p>
+                  {track.lessonCount && (
+                    <span className="inline-block mt-2 text-[10px] text-slate-600 group-hover:text-violet-400 transition-colors">
+                      {track.lessonCount}+ lessons →
+                    </span>
+                  )}
+                </div>
+              </Link>
+            ))}
           </div>
 
-          <div>
-            <p className="text-xs font-semibold text-slate-600 uppercase tracking-widest mb-4">Coming Soon</p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {comingTracks.map((track) => (
-                <TrackCard key={track.id} track={track} />
-              ))}
+          {/* Supplementary tracks */}
+          {supplementaryTracks.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-slate-600 uppercase tracking-widest mb-4">Supplementary</p>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {supplementaryTracks.map((track) => (
+                  <TrackCard key={track.id} track={track} />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </section>
 
         {/* Features */}

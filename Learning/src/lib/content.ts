@@ -39,6 +39,10 @@ import { behavioralLessons } from '@/content/behavioral/lessons';
 import { behavioralChallenges } from '@/content/behavioral/challenges';
 import { behavioralInterviewQuestions } from '@/content/behavioral/interview';
 import { behavioralProjects } from '@/content/behavioral/projects';
+import { aiEngineeringLessons } from '@/content/ai-engineering/lessons';
+import { aiEngineeringChallenges } from '@/content/ai-engineering/challenges';
+import { aiEngineeringInterviewQuestions } from '@/content/ai-engineering/interview';
+import { aiEngineeringProjects } from '@/content/ai-engineering/projects';
 import type { Lesson, Challenge, Project, InterviewQuestion } from '@/types';
 
 export function getLessons(track: string): Lesson[] {
@@ -53,6 +57,7 @@ export function getLessons(track: string): Lesson[] {
   if (track === 'webdev') return webdevLessons;
   if (track === 'placement') return placementLessons;
   if (track === 'behavioral') return behavioralLessons;
+  if (track === 'ai-engineering') return aiEngineeringLessons;
   return [];
 }
 
@@ -84,6 +89,7 @@ export function getChallenges(track: string): Challenge[] {
   if (track === 'webdev') return webdevChallenges;
   if (track === 'placement') return placementChallenges;
   if (track === 'behavioral') return behavioralChallenges;
+  if (track === 'ai-engineering') return aiEngineeringChallenges;
   return [];
 }
 
@@ -100,6 +106,7 @@ export function getProjects(track: string): Project[] {
   if (track === 'webdev') return webdevProjects;
   if (track === 'placement') return placementProjects;
   if (track === 'behavioral') return behavioralProjects;
+  if (track === 'ai-engineering') return aiEngineeringProjects;
   return [];
 }
 
@@ -119,5 +126,6 @@ export function getInterviewQuestions(track: string): InterviewQuestion[] {
   if (track === 'webdev') return webdevInterviewQuestions;
   if (track === 'placement') return placementInterviewQuestions;
   if (track === 'behavioral') return behavioralInterviewQuestions;
+  if (track === 'ai-engineering') return aiEngineeringInterviewQuestions;
   return [];
 }

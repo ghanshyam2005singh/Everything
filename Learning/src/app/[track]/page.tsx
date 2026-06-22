@@ -3,17 +3,20 @@ import { getLessons, getChallenges, getProjects, getInterviewQuestions } from '@
 import { notFound } from 'next/navigation';
 
 const TRACK_META: Record<string, { name: string; icon: string; color: string }> = {
-  javascript:    { name: 'JavaScript',    icon: 'JS', color: 'from-yellow-500 to-amber-500' },
-  typescript:    { name: 'TypeScript',    icon: 'TS', color: 'from-blue-500 to-blue-600' },
-  databases:     { name: 'Databases',     icon: 'DB', color: 'from-sky-500 to-blue-600' },
-  devops:        { name: 'DevOps',        icon: 'DO', color: 'from-orange-500 to-amber-600' },
-  'system-design': { name: 'System Design', icon: 'SD', color: 'from-teal-500 to-cyan-600' },
-  nodejs:        { name: 'Node.js',       icon: 'ND', color: 'from-green-600 to-emerald-600' },
-  nextjs:        { name: 'Next.js',       icon: 'NX', color: 'from-gray-700 to-gray-900' },
-  react:         { name: 'React',         icon: 'RE', color: 'from-cyan-500 to-sky-500' },
-  webdev:        { name: 'Web Development', icon: 'WD', color: 'from-pink-500 to-rose-600' },
-  placement:     { name: 'Placement & Interview Prep', icon: 'PL', color: 'from-indigo-500 to-violet-600' },
-  behavioral:    { name: 'Behavioral Interviews', icon: 'BEH', color: 'from-cyan-500 to-blue-500' },
+  javascript:       { name: 'JavaScript',                  icon: 'JS',  color: 'from-yellow-500 to-amber-500'   },
+  typescript:       { name: 'TypeScript',                  icon: 'TS',  color: 'from-blue-500 to-blue-600'      },
+  react:            { name: 'React',                       icon: 'RE',  color: 'from-cyan-500 to-sky-500'       },
+  databases:        { name: 'Databases',                   icon: 'DB',  color: 'from-sky-500 to-blue-600'       },
+  nodejs:           { name: 'Node.js',                     icon: 'ND',  color: 'from-green-600 to-emerald-600'  },
+  nextjs:           { name: 'Next.js',                     icon: 'NX',  color: 'from-gray-700 to-gray-900'      },
+  webdev:           { name: 'Web Development',             icon: 'WD',  color: 'from-pink-500 to-rose-600'      },
+  devops:           { name: 'DevOps',                      icon: 'DO',  color: 'from-orange-500 to-amber-600'   },
+  'system-design':  { name: 'System Design',               icon: 'SD',  color: 'from-teal-500 to-cyan-600'      },
+  dsa:              { name: 'DSA',                         icon: 'DS',  color: 'from-violet-500 to-purple-600'  },
+  aws:              { name: 'AWS Notes',                   icon: 'AW',  color: 'from-orange-400 to-amber-500'   },
+  placement:        { name: 'Placement & Interview Prep',  icon: 'PL',  color: 'from-indigo-500 to-violet-600'  },
+  behavioral:       { name: 'Behavioral Interviews',       icon: 'BEH', color: 'from-cyan-500 to-blue-500'      },
+  'ai-engineering': { name: 'AI Engineering Fundamentals', icon: 'AI',  color: 'from-purple-500 to-pink-500'    },
 };
 
 export default async function TrackOverviewPage({ params }: { params: Promise<{ track: string }> }) {
