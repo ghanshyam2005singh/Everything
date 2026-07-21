@@ -9,6 +9,44 @@ export const binarySearchSection: DSASection = {
   color: 'from-indigo-500 to-blue-600',
   subsections: [
     {
+      id: 'bs-theory',
+      title: 'Theory',
+      topics: [
+        {
+          id: 'binary-search-theory',
+          slug: 'binary-search-theory',
+          title: 'Binary Search — Theory (Read This First)',
+          type: 'lesson',
+          difficulty: 'easy',
+          introduction: `Binary search finds a value (or a boundary) inside a **sorted** collection by repeatedly cutting the search space **in half** — check the middle, decide which half must contain the answer, discard the other half, repeat. Why it exists: linear search wastes the fact that the data is sorted; binary search is O(log n) instead of O(n) — for a billion elements that's ~30 steps instead of a billion. Real-world usage: database index lookups, "jump to word starting with..." in a dictionary app, git bisect (binary-searching commit history for the one that introduced a bug), and any "find the minimum/maximum X such that condition(X) holds" optimization problem.`,
+          theory: `**The one template to learn deeply and reuse everywhere:**\n\`\`\`cpp\nint lo = 0, hi = n - 1;      // inclusive bounds: answer could be anywhere in [lo, hi]\nint ans = -1;\n\nwhile (lo <= hi) {\n    int mid = lo + (hi - lo) / 2;      // see below for why NOT (lo+hi)/2\n\n    if (check(mid)) {                  // mid satisfies our condition\n        ans = mid;\n        hi = mid - 1;                   // keep searching left for an earlier/better answer\n    } else {\n        lo = mid + 1;                   // discard the left half\n    }\n}\n\`\`\`\n**Syntax explained token by token:**\n- \`while (lo <= hi)\` — keep going while the range [lo,hi] still contains at least one index; stop when it's empty (lo > hi).\n- \`int mid = lo + (hi - lo) / 2;\` — NOT \`(lo + hi) / 2\`, because if lo and hi are both large, \`lo + hi\` can overflow a 32-bit int even though the true midpoint is small. \`(hi - lo)\` is always a small range size, so no overflow risk.\n- \`/\` truncates toward zero for ints, so mid always rounds down toward lo.\n- \`hi = mid - 1\` / \`lo = mid + 1\` — after checking mid, never check it again; move strictly past it. Forgetting the ±1 (writing \`hi = mid\`) is the #1 cause of infinite loops in binary search.\n- \`check(mid)\` is the only part that changes per problem — it can be \`arr[mid] == target\`, \`arr[mid] >= target\`, or a custom \`feasible(mid)\` function.\n\n**When to reach for it:** the array is sorted (or sortable), OR the problem describes "find the minimum/maximum X such that some yes/no condition flips exactly once as X increases" — this is called **binary search on the answer** and needs no actual array, just a monotonic condition over a range of candidate answers.\n\n**Binary search on the answer template** (e.g. "minimum eating speed to finish bananas in H hours"):\n\`\`\`cpp\nint lo = minPossibleAnswer, hi = maxPossibleAnswer, ans = hi;\nwhile (lo <= hi) {\n    int mid = lo + (hi - lo) / 2;\n    if (feasible(mid)) { ans = mid; hi = mid - 1; }   // mid works, try smaller\n    else lo = mid + 1;                                  // mid doesn't work, need bigger\n}\n\`\`\`\nRequirement: \`feasible()\` must be monotonic (once true, stays true as mid keeps increasing, or vice versa) — if it flips back and forth, binary search does not apply.`,
+          codeExamples: [
+            { title: 'Simple: exact value search', language: 'cpp', code: `int search(vector<int>& nums, int target) {\n    int lo = 0, hi = (int)nums.size() - 1;\n    while (lo <= hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (nums[mid] == target) return mid;\n        else if (nums[mid] < target) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return -1;\n}`, explanation: 'The textbook template — three-way branch on ==, <, >.' },
+            { title: 'Practical: first position >= target (lower bound)', language: 'cpp', code: `int lowerBound(vector<int>& nums, int target) {\n    int lo = 0, hi = (int)nums.size() - 1, ans = nums.size();\n    while (lo <= hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (nums[mid] >= target) { ans = mid; hi = mid - 1; }   // candidate, but look further left\n        else lo = mid + 1;\n    }\n    return ans;\n}`, explanation: 'Used to build "find first/last occurrence" and "insert position" problems.', dryRun: 'nums=[1,3,5,7,9,11], target=7 -> mid=5(11)no, mid=2(5)no->lo=3, mid=4(9)yes ans=4 hi=3, mid=3(7)yes ans=3 hi=2 -> loop ends, ans=3' },
+            { title: 'Industry-style: binary search on the answer (rate limiting / capacity planning)', language: 'cpp', code: `// "Minimum server capacity so all requests finish within T minutes" — same shape as Koko Eating Bananas\nbool feasible(int capacity, vector<int>& jobs, int T) {\n    int timeNeeded = 0;\n    for (int job : jobs) timeNeeded += (job + capacity - 1) / capacity;  // ceil division\n    return timeNeeded <= T;\n}\nint minCapacity(vector<int>& jobs, int T) {\n    int lo = 1, hi = *max_element(jobs.begin(), jobs.end()), ans = hi;\n    while (lo <= hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (feasible(mid, jobs, T)) { ans = mid; hi = mid - 1; }\n        else lo = mid + 1;\n    }\n    return ans;\n}`, explanation: 'Capacity-planning/throughput problems in real systems are frequently solved by binary searching over a range of possible capacities and checking feasibility at each guess.' },
+          ],
+          commonMistakes: [
+            'Writing (lo + hi) / 2 instead of lo + (hi - lo) / 2 — silent overflow bug on large ranges.',
+            'Running binary search on unsorted data — it does not crash, it just silently returns wrong answers.',
+            'Writing hi = mid or lo = mid instead of mid ± 1 in a branch that must strictly shrink the range — causes an infinite loop.',
+            'Mixing up a while(lo <= hi) template with a while(lo < hi) template copied from elsewhere — their boundary-update rules differ; pick one and be consistent.',
+            'Forgetting edge cases: empty array, target smaller/larger than every element, single-element array.',
+          ],
+          revisionNotes: [
+            'lo + (hi - lo) / 2 avoids overflow — never (lo + hi) / 2.',
+            'while (lo <= hi), and every branch must move a bound strictly past mid (mid±1).',
+            'Binary search on the answer: same template, replace arr[mid] with a monotonic feasible(mid).',
+            'Time: O(log n). Space: O(1) iterative.',
+          ],
+          interviewQuestions: [
+            { question: 'Why is lo + (hi - lo) / 2 preferred over (lo + hi) / 2?', answer: '(lo + hi) can overflow a 32-bit int if both are large, even though the true midpoint is a small, valid number — because addition happens before division. lo + (hi - lo) / 2 never adds two large numbers together since (hi - lo) is bounded by the (small) size of the remaining range, so it avoids overflow while computing the same midpoint.', difficulty: 'medium' },
+            { question: 'What condition must a problem satisfy for "binary search on the answer" to be valid, even without a sorted array?', answer: 'The feasibility check over the candidate answers must be monotonic — as the candidate value increases, the yes/no answer to "does this work" must flip at most once (either false→true or true→false) and never oscillate. That single flip point is exactly what binary search locates in O(log(range)) checks.', difficulty: 'medium' },
+          ],
+          keyTakeaways: ['One template (inclusive lo/hi, mid ± 1 updates) solves nearly every binary search variant.', 'Binary search on the answer only needs a monotonic feasible() function, not a sorted array.'],
+        },
+      ],
+    },
+    {
       id: 'bs-1d',
       title: 'BS on 1D Arrays',
       topics: [

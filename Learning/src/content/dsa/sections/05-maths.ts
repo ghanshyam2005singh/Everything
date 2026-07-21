@@ -9,6 +9,37 @@ export const mathsSection: DSASection = {
   color: 'from-yellow-400 to-orange-500',
   topics: [
     {
+      id: 'basic-maths-theory',
+      slug: 'basic-maths-theory',
+      title: 'Basic Maths for DSA — Theory (Read This First)',
+      type: 'lesson',
+      difficulty: 'easy',
+      introduction: `Almost every "maths" DSA problem (digit extraction, GCD, primality, divisors, Armstrong/palindrome numbers) boils down to two operations you will use over and over: **isolating the last digit of a number** with \`% 10\`, and **removing the last digit** with \`/ 10\`. Why it exists as its own topic: these two operations, chained in a loop, let you process a number digit-by-digit without ever converting it to a string — which is faster and is what interviewers expect. Real-world usage: checksum validation (credit card Luhn algorithm), hashing, cryptography (GCD/modular arithmetic in RSA), and any problem involving number theory.`,
+      theory: `**The modulo/divide loop — the single most reused pattern in this section:**\n\`\`\`cpp\nint n = 1234;\nwhile (n > 0) {\n    int lastDigit = n % 10;   // % (modulo) gives the REMAINDER after division — for a base-10 number, that remainder is always its last digit\n    n = n / 10;               // integer division DISCARDS the last digit (1234 / 10 == 123, not 123.4)\n    // do something with lastDigit\n}\n\`\`\`\n- \`%\` (modulo) — returns the remainder of a division. \`17 % 5 == 2\` because \`17 = 3*5 + 2\`. For extracting digits, \`n % 10\` always isolates the ones-place digit because 10 is the base we count in.\n- \`/\` (integer division) — when both operands are \`int\`, C++ truncates toward zero and drops any fractional part. \`1234 / 10 == 123\`.\n- The loop terminates when \`n\` becomes \`0\`, meaning every digit has been peeled off.\n\n**GCD (Greatest Common Divisor) — Euclidean algorithm:**\n\`\`\`cpp\nint gcd(int a, int b) {\n    while (b != 0) {\n        int temp = b;\n        b = a % b;   // key insight: gcd(a,b) == gcd(b, a % b)\n        a = temp;\n    }\n    return a;\n}\n\`\`\`\nWhy this works: any common divisor of \`a\` and \`b\` also divides \`a % b\`, so the pair \`(a, b)\` and \`(b, a % b)\` always share the same GCD, but the numbers shrink fast (roughly halving every two steps), giving **O(log(min(a,b)))** time — far better than checking every number up to \`min(a,b)\`.\n\n**Primality check:**\n\`\`\`cpp\nbool isPrime(int n) {\n    if (n < 2) return false;\n    for (int i = 2; i * i <= n; i++) {   // only need to check up to sqrt(n)\n        if (n % i == 0) return false;\n    }\n    return true;\n}\n\`\`\`\nWhy only up to \`sqrt(n)\`? If \`n = a * b\` with \`a <= b\`, then \`a\` cannot be bigger than \`sqrt(n)\` (otherwise \`a*b\` would exceed \`n\`). So if no divisor exists up to \`sqrt(n)\`, none exists at all. This turns an O(n) check into **O(sqrt(n))**.\n\n**Finding all divisors:** loop \`i\` from 1 to \`sqrt(n)\`; whenever \`n % i == 0\`, both \`i\` and \`n/i\` are divisors — this halves the work compared to checking every number up to \`n\`.`,
+      codeExamples: [
+        { title: 'Simple: count digits', language: 'cpp', code: `int countDigits(int n) {\n    int count = 0;\n    while (n > 0) {\n        n = n / 10;\n        count++;\n    }\n    return count;\n}`, explanation: 'Peel off one digit per loop iteration using / 10; count how many peels it takes to reach 0.' },
+        { title: 'Practical: reverse a number', language: 'cpp', code: `int reverseNumber(int n) {\n    int reversed = 0;\n    while (n > 0) {\n        int lastDigit = n % 10;\n        reversed = reversed * 10 + lastDigit;   // shift existing digits left, append the new one\n        n = n / 10;\n    }\n    return reversed;\n}`, explanation: 'reversed*10 shifts all previously placed digits one position to the left, making room to append lastDigit at the ones place.', dryRun: 'n=123 -> extract 3, reversed=3, n=12 -> extract 2, reversed=32, n=1 -> extract 1, reversed=321, n=0 -> stop.' },
+        { title: 'Industry-style: Luhn checksum digit-sum idea', language: 'cpp', code: `// Credit-card validation (Luhn algorithm) reuses the exact same digit-extraction loop\nbool luhnCheck(long long number) {\n    int sum = 0; bool doubleDigit = false;\n    while (number > 0) {\n        int digit = number % 10;\n        if (doubleDigit) { digit *= 2; if (digit > 9) digit -= 9; }\n        sum += digit;\n        doubleDigit = !doubleDigit;\n        number /= 10;\n    }\n    return sum % 10 == 0;\n}`, explanation: 'Real payment systems validate card numbers with exactly this % 10 / 10 digit loop, just with extra arithmetic per digit.' },
+      ],
+      commonMistakes: [
+        'Using n % 10 on a negative number and forgetting C++ modulo can return a negative remainder (e.g. -7 % 3 == -1, not 2 like in Python) — take abs(n) first if sign matters.',
+        'Checking primality by looping all the way to n instead of sqrt(n) — technically correct but far slower than necessary.',
+        'Off-by-one in the divisor loop: use i * i <= n, not i <= n, and remember to check i*i for overflow on large n (use long long).',
+        'Forgetting that 0 and 1 are not prime — always special-case n < 2.',
+      ],
+      revisionNotes: [
+        '% 10 extracts the last digit; / 10 removes it. Loop until n == 0.',
+        'GCD(a,b) = GCD(b, a % b) — Euclidean algorithm, O(log(min(a,b))).',
+        'Primality / divisor search only needs to go up to sqrt(n).',
+        'Watch for integer overflow — use long long for anything that might exceed ~2.1 billion.',
+      ],
+      interviewQuestions: [
+        { question: 'Why do we only check divisibility up to sqrt(n) for primality testing?', answer: 'If n has a factor larger than sqrt(n), it must pair with a factor smaller than sqrt(n) (since their product is n). So if no factor exists up to sqrt(n), none exists anywhere, making sqrt(n) a safe and complete cutoff — reducing the check from O(n) to O(sqrt(n)).', difficulty: 'easy' },
+        { question: 'Why does the Euclidean GCD algorithm terminate, and how fast is it?', answer: 'Each step replaces (a,b) with (b, a % b), and a % b is always strictly smaller than b, so the pair shrinks every iteration until b reaches 0. It provably takes O(log(min(a,b))) steps because the smaller number shrinks by at least half every two iterations (a Fibonacci-related bound).', difficulty: 'medium' },
+      ],
+      keyTakeaways: ['% and / together let you process any number digit-by-digit without strings.', 'sqrt(n) is the recurring bound for primality/divisor problems — memorize why.'],
+    },
+    {
       id: 'count-digits',
       slug: 'count-digits',
       title: 'Count All Digits of a Number',

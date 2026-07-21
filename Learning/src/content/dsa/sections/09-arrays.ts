@@ -9,6 +9,44 @@ export const arraysSection: DSASection = {
   color: 'from-blue-400 to-blue-600',
   subsections: [
     {
+      id: 'array-theory',
+      title: 'Theory',
+      topics: [
+        {
+          id: 'arrays-theory',
+          slug: 'arrays-theory',
+          title: 'Arrays — Theory (Read This First)',
+          type: 'lesson',
+          difficulty: 'easy',
+          introduction: `An array (\`std::vector<int>\` in modern C++) is a block of memory where elements sit **contiguously** (right next to each other) so any element can be reached by index in **O(1)** — the computer computes the exact address as \`base_address + i * element_size\`, no searching needed. Why it exists: it is the most basic building block for organizing a sequence of same-type values, and this O(1) random access is what makes so many array algorithms about being clever with **indices** rather than searching. Real-world usage: every list you scroll through in an app, every row in a spreadsheet, every pixel buffer in an image, every stock-price time series is backed by an array under the hood.`,
+          theory: `\`\`\`cpp\nvector<int> arr = {10, 20, 30, 40};\n//                   0    1   2   3   <- indices, 0-based\ncout << arr[2];   // prints 30 instantly — direct address computation, not a search\n\`\`\`\n\n**Prefix Sum — the single most useful array trick.** Precompute a running total so "sum of range [i,j]" becomes an O(1) lookup instead of an O(n) re-scan:\n\`\`\`cpp\nvector<int> prefix(arr.size() + 1, 0);      // prefix[i] = sum of arr[0..i-1]\nfor (int i = 0; i < arr.size(); i++) prefix[i + 1] = prefix[i] + arr[i];\n// sum of arr[i..j] inclusive = prefix[j+1] - prefix[i]\n\`\`\`\nThe \`+1\` offset lets \`prefix[0] = 0\` mean "sum of zero elements," so the formula works even when \`i == 0\` without a special case.\n\n**Kadane's Algorithm — maximum subarray sum.** At each index you only ever have two choices: extend the previous running subarray, or restart fresh here — take whichever gives the bigger sum:\n\`\`\`cpp\nint currentSum = arr[0], maxSum = arr[0];\nfor (int i = 1; i < arr.size(); i++) {\n    currentSum = max(arr[i], currentSum + arr[i]);   // extend or restart\n    maxSum = max(maxSum, currentSum);\n}\n\`\`\`\n\n**Moore's Voting Algorithm — majority element (appears > n/2 times) in O(1) space:**\n\`\`\`cpp\nint candidate = 0, count = 0;\nfor (int num : arr) {\n    if (count == 0) candidate = num;             // no strong candidate — adopt this one\n    count += (num == candidate) ? 1 : -1;\n}\n\`\`\`\nEvery non-majority element that "cancels" the candidate's count uses up one of a strictly-minority group, so the true majority element can never be fully cancelled — it always survives as the final candidate.\n\n**Dutch National Flag (3-pointer partition)** — sort an array of only 0s/1s/2s in one pass using \`low, mid, high\` pointers; after swapping with \`high\` the new \`arr[mid]\` is unexamined so \`mid\` must **not** advance, but after swapping with \`low\` it's already known-good so \`mid\` does advance. See the array problem files for the full template.\n\n**Cyclic Sort** — when values are guaranteed in range \`[1..n]\`, each value has a "correct home" at index \`value - 1\`; repeatedly swapping each element into its home takes O(n) total swaps (every swap places at least one element permanently), useful for "find missing/duplicate number" problems.`,
+          codeExamples: [
+            { title: 'Simple: range-sum query with prefix sum', language: 'cpp', code: `vector<int> arr = {2, 4, 1, 5, 3};\nvector<int> prefix(arr.size() + 1, 0);\nfor (int i = 0; i < (int)arr.size(); i++) prefix[i + 1] = prefix[i] + arr[i];\n\nint sum_1_to_3 = prefix[4] - prefix[1];   // arr[1]+arr[2]+arr[3] = 4+1+5 = 10`, explanation: 'Build once in O(n), then answer any range-sum query in O(1).' },
+            { title: 'Practical: maximum subarray sum (Kadane\'s)', language: 'cpp', code: `int maxSubArray(vector<int>& arr) {\n    int currentSum = arr[0], maxSum = arr[0];\n    for (int i = 1; i < arr.size(); i++) {\n        currentSum = max(arr[i], currentSum + arr[i]);\n        maxSum = max(maxSum, currentSum);\n    }\n    return maxSum;\n}`, explanation: 'One pass, O(1) space — compare to brute-force O(n^2)/O(n^3) checking every subarray.' },
+            { title: 'Industry-style: rolling analytics window (e.g. 7-day revenue total)', language: 'cpp', code: `// Prefix sums power dashboards that need many different range totals over the same data\nvector<long long> dailyPrefix(revenue.size() + 1, 0);\nfor (int i = 0; i < (int)revenue.size(); i++) dailyPrefix[i+1] = dailyPrefix[i] + revenue[i];\nlong long weekTotal = dailyPrefix[day + 7] - dailyPrefix[day];   // O(1) per query`, explanation: 'Any analytics dashboard answering many "sum over this date range" queries reuses this exact prefix-sum idea instead of re-summing raw rows each time.' },
+          ],
+          commonMistakes: [
+            'Off-by-one in prefix sum indexing — always sanity check with a tiny 2-element example by hand.',
+            'Forgetting Kadane\'s needs the max(arr[i], currentSum + arr[i]) reset logic, not just always adding.',
+            'Assuming Moore\'s Voting alone proves a majority exists — if the problem does not guarantee one, a second verification pass over the array is required.',
+            'In Dutch Flag partitioning, advancing mid after a swap with high (the new arr[mid] is unexamined and must be rechecked).',
+            'Applying cyclic sort when values are not actually guaranteed to be in range [1..n] — it silently produces wrong results otherwise.',
+          ],
+          revisionNotes: [
+            'Prefix sum: O(n) build, O(1) range-sum query.',
+            'Kadane\'s: O(n)/O(1) — currentSum = max(arr[i], currentSum + arr[i]).',
+            'Moore\'s Voting: O(n)/O(1) — candidate cancels out via count, verify with a second pass if majority isn\'t guaranteed.',
+            'Dutch Flag: O(n)/O(1) three-way partition; cyclic sort: O(n)/O(1) for values in [1..n].',
+          ],
+          interviewQuestions: [
+            { question: 'How does prefix sum reduce repeated range-sum queries from O(n) each to O(1) each?', answer: 'By precomputing a running total array once in O(n), any range sum [i,j] can be derived as prefix[j+1] - prefix[i], a single subtraction, instead of re-adding every element in the range each time.', difficulty: 'easy' },
+            { question: 'Why does Kadane\'s algorithm work, i.e. why is it safe to "restart" the running sum when it goes negative?', answer: 'If the running sum ending at the previous index is negative, including it in any future subarray can only reduce that subarray\'s total, so the best choice is to discard it and start a fresh subarray at the current element — this greedy local choice is provably optimal because the max subarray ending at index i only depends on the max subarray ending at i-1.', difficulty: 'medium' },
+          ],
+          keyTakeaways: ['O(1) indexed access is what makes arrays special — most techniques exploit this.', 'Prefix sum, Kadane\'s, Moore\'s Voting, Dutch Flag, and Cyclic Sort are the five array tricks that show up repeatedly across problems.'],
+        },
+      ],
+    },
+    {
       id: 'easy-array-problems',
       title: 'Easy Array Problems',
       topics: [

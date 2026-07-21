@@ -9,6 +9,44 @@ export const stringsSection: DSASection = {
   color: 'from-teal-500 to-cyan-600',
   subsections: [
     {
+      id: 'strings-theory',
+      title: 'Theory',
+      topics: [
+        {
+          id: 'strings-basic-theory',
+          slug: 'strings-basic-theory',
+          title: 'Strings — Theory (Read This First)',
+          type: 'lesson',
+          difficulty: 'easy',
+          introduction: `\`std::string\` in C++ behaves a lot like a \`vector<char>\` — a **contiguous, indexable sequence of characters**, so most array techniques (two pointers, sliding window, prefix sums) apply to strings exactly the same way. The difference is convenience: strings support \`+\` concatenation, \`==\` comparison, and substring extraction directly. Why this matters: a huge fraction of "hard" string problems are really an array technique wearing a string costume. Real-world usage: text search (Ctrl+F), autocomplete, DNA sequence matching, log parsing, and compiler tokenizing are all built on these exact primitives.`,
+          theory: `**Core syntax reference:**\n- \`s.size()\` / \`s.length()\` — number of characters (identical, either works).\n- \`s[i]\` — character at index i (0-based), no bounds checking; \`s.at(i)\` is the same but throws on out-of-range.\n- \`s.substr(start, len)\` — returns a **new** string of len characters from start; omit len to go to the end. Each call allocates — avoid in tight loops.\n- \`s + t\` / \`s += t\` — concatenation, also allocates a new string.\n- \`s == t\`, \`s < t\` — == is exact equality; < is lexicographic (dictionary) order, character by character.\n- \`s.find(t)\` — index of the first occurrence of t in s, or the special constant \`string::npos\` if not found (never compare its result to -1 — npos is a huge unsigned value, not -1).\n- \`reverse(s.begin(), s.end())\` and \`sort(s.begin(), s.end())\` — in-place, from \`<algorithm>\`.\n- \`s[i] - '0'\` — converts a digit character like '7' to the integer 7, because digit characters '0'-'9' have consecutive character codes.\n- \`s.push_back(c)\` / \`s += c\` — append one character.\n- \`to_string(n)\` / \`stoi(s)\` — number ↔ string conversions.\n\n**Recurring string-problem flavors:**\n1. **Pattern matching** — does needle appear inside haystack? Brute force is O(n·m): try every starting position, compare characters until mismatch or full match.\n2. **Palindrome checks** — two pointers from both ends, moving inward, comparing as they go.\n3. **Anagram/frequency problems** — same characters, different order; use a fixed 26-size counter array (or hash map) — increment for one string, decrement for the other, valid if all counts return to zero.\n4. **Substring/window problems** — longest/shortest substring satisfying a condition; this is sliding window (see the Sliding Window theory) wearing a string costume.\n5. **Parsing/building** — converting between string and number representations, splitting on delimiters.\n\n**Why brute-force substring search is O(n·m):** for each of the (n - m + 1) possible starting positions, you may compare up to m characters before a mismatch. For very large inputs, KMP or Rabin-Karp bring this down to O(n + m), but brute force is the correct first tool and usually fits within typical constraints.`,
+          codeExamples: [
+            { title: 'Simple: check palindrome', language: 'cpp', code: `bool isPalindrome(string s) {\n    int left = 0, right = (int)s.size() - 1;\n    while (left < right) {\n        if (s[left] != s[right]) return false;\n        left++; right--;\n    }\n    return true;\n}`, explanation: 'Classic two-pointer opposite-ends pattern applied directly to a string.' },
+            { title: 'Practical: anagram check with a frequency counter', language: 'cpp', code: `bool isAnagram(string s, string t) {\n    if (s.size() != t.size()) return false;\n    vector<int> count(26, 0);\n    for (char c : s) count[c - 'a']++;      // 'a'-'a'=0 ... 'z'-'a'=25, maps letters to indices 0-25\n    for (char c : t) count[c - 'a']--;\n    for (int c : count) if (c != 0) return false;\n    return true;\n}`, explanation: 'One counter array shared by both strings — if they are true anagrams, every count returns exactly to zero.' },
+            { title: 'Industry-style: brute-force substring search (LeetCode 28 shape)', language: 'cpp', code: `int strStr(string haystack, string needle) {\n    int n = haystack.size(), m = needle.size();\n    for (int i = 0; i <= n - m; i++) {\n        int j = 0;\n        while (j < m && haystack[i + j] == needle[j]) j++;\n        if (j == m) return i;   // matched all of needle\n    }\n    return -1;\n}`, explanation: 'This is the same core loop used inside real text-search / log-scanning tools before they graduate to KMP/Rabin-Karp for very large inputs.', dryRun: 'haystack="sadbutsad", needle="sad" -> i=0: compare s,a,d all match, j reaches 3==m -> return 0' },
+          ],
+          commonMistakes: [
+            'Indexing s[i] without checking i < s.size() first — out-of-bounds access on std::string is undefined behavior.',
+            'Calling .substr() repeatedly inside a loop — each call allocates a new string, turning an O(n) algorithm into O(n^2).',
+            's.size() - 1 on an empty string underflows (size_t is unsigned) to a huge number — guard empty strings first.',
+            'Comparing s.find(t) to -1 instead of string::npos — find never returns -1.',
+            'Forgetting case sensitivity: \'A\' != \'a\' — lowercase everything first if the problem is case-insensitive.',
+          ],
+          revisionNotes: [
+            'std::string ≈ vector<char> — array techniques (two pointer, sliding window, prefix sum) apply directly.',
+            'substr/concatenation allocate — avoid in hot loops; prefer index-based comparisons.',
+            'string::npos, not -1, is what .find() returns on failure.',
+            'Brute-force substring search: O(n*m); KMP/Rabin-Karp: O(n+m) for large inputs.',
+          ],
+          interviewQuestions: [
+            { question: 'Why is calling .substr() inside a loop a performance red flag?', answer: 'Each call to .substr() allocates and copies a brand-new string of the requested length. If done once per iteration of an O(n) loop, and each substring can be up to O(n) long, the total work becomes O(n^2) instead of O(n) — often the actual cause of a "TLE" (time limit exceeded) on string problems that look O(n) at a glance.', difficulty: 'medium' },
+            { question: 'How would you check if two strings are anagrams without extra space proportional to the alphabet?', answer: 'Sort both strings and compare for equality (O(n log n) time, O(1) extra space beyond the sort itself) — a valid alternative to the O(n) frequency-counter approach when minimizing auxiliary space matters more than time.', difficulty: 'easy' },
+          ],
+          keyTakeaways: ['A string is an indexable char sequence — reuse two-pointer and sliding-window thinking directly.', 'Prefer index math over repeated substr()/concatenation in performance-sensitive loops.'],
+        },
+      ],
+    },
+    {
       id: 'basic-string-problems',
       title: 'Basic/Easy String Problems',
       topics: [
