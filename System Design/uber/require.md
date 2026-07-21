@@ -1,5 +1,0 @@
-Drivers
-Passengers
-Matching
-Location
-Pricing
