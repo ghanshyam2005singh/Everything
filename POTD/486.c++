@@ -14,4 +14,4 @@ public:
         vector<vector<int>> dp(n, vector<int>(n, INT_MIN));
         return solve(0, n-1, nums, dp) >= 0;
     }
-};8
+};
